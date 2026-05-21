@@ -218,6 +218,9 @@ class Xen_AI_Handler {
 			$p .= "## Additional Instructions\n" . $custom_instructions . "\n";
 		}
 
+		// Allow Pro features to append to the system prompt
+		$p = apply_filters( 'xen_ai_system_prompt', $p, $bot_name, $knowledge_context );
+
 		return $p;
 	}
 }

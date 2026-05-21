@@ -38,6 +38,8 @@ $xen_ai_files = [
 	'includes/class-xen-ai-core.php',
 	'includes/class-knowledge-base.php',
 	'includes/class-site-content.php',
+	'includes/class-license.php',
+	'includes/class-pro-features.php',
 	'includes/class-ai-handler.php',
 	'includes/class-file-processor.php',
 	'includes/class-chat-ajax.php',
@@ -58,4 +60,6 @@ register_deactivation_hook( __FILE__, [ 'Xen_AI_Core', 'deactivate' ] );
 // ── Boot ───────────────────────────────────────────────────────────────────────
 add_action( 'plugins_loaded', function () {
 	Xen_AI_Core::get_instance()->init();
+	// Boot pro features only when license is valid
+	Xen_AI_Pro_Features::get_instance()->init();
 } );

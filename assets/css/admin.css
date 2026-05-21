@@ -414,6 +414,21 @@
 }
 .xen-ai-btn-pro:hover { background: linear-gradient(135deg, #a78bfa, #6366f1); }
 
+/* Locked pro feature tile */
+.xen-pro-locked {
+  opacity: .55;
+  filter: blur(0.4px);
+  pointer-events: none;
+  user-select: none;
+  position: relative;
+}
+.xen-pro-locked::after {
+  content: '🔒';
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: 0.9rem;
+}
+
 /* ── Modal ──────────────────────────────────────────────── */
 .xen-ai-modal { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; }
 .xen-ai-modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.4); }

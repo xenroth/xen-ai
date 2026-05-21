@@ -93,6 +93,9 @@ class Xen_AI_Chat_Ajax {
 		$site_ctx = $site->get_context_for_query( $message );
 		$context  = trim( $kb_ctx . ( $kb_ctx && $site_ctx ? "\n\n" : '' ) . $site_ctx );
 
+		// Allow Pro features to enrich context (e.g. KB topic insights)
+		$context = apply_filters( 'xen_ai_chat_context', $context, $message );
+
 		// ── Call AI ────────────────────────────────────────────────────────────
 		$ai       = new Xen_AI_Handler();
 		$raw      = $ai->get_response( $messages, $context );

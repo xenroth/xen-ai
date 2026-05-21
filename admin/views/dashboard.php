@@ -171,7 +171,11 @@ $configured    = $ai->is_configured();
 
 		<div class="xen-ai-pro-cta">
 			<span class="xen-ai-pro-price">₱999 <small>one-time</small></span>
-			<button type="button" class="xen-ai-btn xen-ai-btn-pro" disabled>🔒 Upgrade to Pro — Coming Soon</button>
+			<?php if ( Xen_AI_License::is_active() ) : ?>
+				<span class="xen-ai-pro-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);font-size:0.85rem;padding:6px 14px;">✅ Pro Active</span>
+			<?php else : ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-btn xen-ai-btn-pro" style="opacity:1;cursor:pointer;">🔑 Activate Pro License</a>
+			<?php endif; ?>
 		</div>
 
 		<div class="xen-ai-pro-contact">

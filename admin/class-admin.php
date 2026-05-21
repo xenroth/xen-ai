@@ -21,6 +21,8 @@ class Xen_AI_Admin {
 		add_action( 'wp_ajax_xen_ai_delete_convo',    [ $this, 'ajax_delete_convo' ] );
 		add_action( 'wp_ajax_xen_ai_get_messages',    [ $this, 'ajax_get_messages' ] );
 		add_action( 'wp_ajax_xen_ai_upload_logo',     [ $this, 'ajax_upload_logo' ] );
+		add_action( 'wp_ajax_xen_ai_activate_license',   [ $this, 'ajax_activate_license' ] );
+		add_action( 'wp_ajax_xen_ai_deactivate_license', [ $this, 'ajax_deactivate_license' ] );
 	}
 
 	// ── Menus ─────────────────────────────────────────────────────────────────
@@ -40,6 +42,7 @@ class Xen_AI_Admin {
 		add_submenu_page( 'xen-ai', __( 'Knowledge Base', 'xen-ai' ),      __( 'Knowledge Base', 'xen-ai' ),      'manage_options', 'xen-ai-kb',       [ $this, 'page_kb' ] );
 		add_submenu_page( 'xen-ai', __( 'Leads & Conversations', 'xen-ai' ), __( 'Leads & Conversations', 'xen-ai' ), 'manage_options', 'xen-ai-leads', [ $this, 'page_leads' ] );
 		add_submenu_page( 'xen-ai', __( 'Settings', 'xen-ai' ),            __( 'Settings', 'xen-ai' ),            'manage_options', 'xen-ai-settings', [ $this, 'page_settings' ] );
+		add_submenu_page( 'xen-ai', __( 'Pro License', 'xen-ai' ),         __( '🔑 Pro License', 'xen-ai' ),      'manage_options', 'xen-ai-license',   [ $this, 'page_license' ] );
 	}
 
 	// ── Assets ────────────────────────────────────────────────────────────────
@@ -96,6 +99,11 @@ class Xen_AI_Admin {
 	public function page_settings() {
 		$this->check_cap();
 		include XEN_AI_PLUGIN_DIR . 'admin/views/settings.php';
+	}
+
+	public function page_license() {
+		$this->check_cap();
+		include XEN_AI_PLUGIN_DIR . 'admin/views/license.php';
 	}
 
 	// ── AJAX handlers ─────────────────────────────────────────────────────────
