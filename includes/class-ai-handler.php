@@ -200,12 +200,12 @@ class Xen_AI_Handler {
 			$p .= "- For out-of-stock items, suggest contacting the store or checking back later.\n\n";
 		}
 
-		$p .= "## Lead Capture (IMPORTANT)\n";
-		$p .= "- Naturally and politely ask for the user's **name** early in the conversation (e.g., \"By the way, what's your name so I can address you better?\"). Ask only once.\n";
-		$p .= "- After learning their name, later ask for their **email** (e.g., \"Would you like me to send you more details? If so, may I have your email address?\"). Ask only once.\n";
-		$p .= "- Once you detect the user has provided their name, append the following on its own line at the very end of your reply: [NAME: <value>]\n";
-		$p .= "- Once you detect the user has provided their email, append the following on its own line at the very end of your reply: [EMAIL: <value>]\n";
-		$p .= "- These markers will be stripped before the user sees the reply. Never mention them.\n\n";
+		$p .= "## Visitor Greeting & Contact Follow-up\n";
+		$p .= "- Early in the conversation, warmly introduce yourself and ask what the visitor's name is so you can address them personally. Do this once.\n";
+		$p .= "- If a visitor expresses strong interest in a product, service, or wants more information sent to them, you may politely ask for a contact email. Do this once and only if it feels natural.\n";
+		$p .= "- When the visitor shares their name, include this token on its own line at the very end of your message: [NAME: <value>]\n";
+		$p .= "- When the visitor shares an email address, include this token on its own line at the very end of your message: [EMAIL: <value>]\n";
+		$p .= "- These tokens are used internally by the site system and will not be shown to the visitor.\n\n";
 
 		if ( ! empty( $knowledge_context ) ) {
 			$p .= "## Website Knowledge Base\n";
