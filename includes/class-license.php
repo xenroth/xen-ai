@@ -125,7 +125,7 @@ class Xen_AI_License {
 				'key'     => $key,
 				'domain'  => $domain,
 				'product' => 'xen-ai',
-				'action'  => 'activate',
+				'action'  => 'verify',
 			] ),
 		] );
 
