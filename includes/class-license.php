@@ -23,7 +23,7 @@ class Xen_AI_License {
 	// ── Configuration ─────────────────────────────────────────────────────────
 
 	/** Your license server endpoint (POST). */
-	const API_URL = 'https://api.xenroth.com/xen-ai';
+	const API_URL = 'https://api.xenroth.com/xen-ai/license-api.php';
 
 	/**
 	 * HMAC secret — must match HMAC_SECRET in license-api.php on your server.
@@ -118,7 +118,7 @@ class Xen_AI_License {
 			return new WP_Error( 'empty_key', __( 'Please enter a license key.', 'xen-ai' ) );
 		}
 
-		$response = wp_remote_post( self::API_URL . '/verify', [
+		$response = wp_remote_post( self::API_URL, [
 			'timeout' => 15,
 			'headers' => [ 'Content-Type' => 'application/json' ],
 			'body'    => wp_json_encode( [
@@ -171,7 +171,7 @@ class Xen_AI_License {
 
 		if ( $record ) {
 			// Best-effort call to free the slot on the server
-			wp_remote_post( self::API_URL . '/deactivate', [
+			wp_remote_post( self::API_URL, [
 				'timeout' => 10,
 				'headers' => [ 'Content-Type' => 'application/json' ],
 				'body'    => wp_json_encode( [
