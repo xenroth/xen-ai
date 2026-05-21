@@ -23,14 +23,13 @@ class Xen_AI_License {
 	// ── Configuration ─────────────────────────────────────────────────────────
 
 	/** Your license server endpoint (POST). */
-	const API_URL = 'https://api.xenroth.com/xen-ai/license';
+	const API_URL = 'https://api.xenroth.com/xen-ai';
 
 	/**
-	 * HMAC secret shared with your license server.
-	 * IMPORTANT: replace this with a long random string that ONLY exists on your
-	 * server and in this file. Never commit the real value to a public repo.
+	 * HMAC secret — must match HMAC_SECRET in license-api.php on your server.
+	 * This is what makes tokens tamper-proof. Keep this value private.
 	 */
-	const HMAC_SECRET = 'XEN_REPLACE_WITH_YOUR_OWN_HMAC_SECRET_32CHARS';
+	const HMAC_SECRET = 'x3N!rTh7@qL2mW9#pK5vY8&bZ1cJ4sF6';
 
 	/** wp_options key that stores the encrypted license record. */
 	const OPTION_KEY  = 'xen_ai_license';
