@@ -45,6 +45,10 @@
       .done(function (res) {
         if (res.success && res.data.session_id) {
           XenChat.sessionId = res.data.session_id;
+          // Pro feature: show page-contextual greeting instead of static one
+          if (res.data.pro_greeting) {
+            XenChat.appendMessage('bot', res.data.pro_greeting);
+          }
         }
       });
     },

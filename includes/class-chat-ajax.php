@@ -44,7 +44,12 @@ class Xen_AI_Chat_Ajax {
 			[ '%s', '%s' ]
 		);
 
-		wp_send_json_success( [ 'session_id' => $session_id ] );
+		$response = apply_filters( 'xen_ai_session_response', [
+			'session_id' => $session_id,
+			'page_url'   => $page_url,
+		] );
+
+		wp_send_json_success( $response );
 	}
 
 	// ── Chat message ──────────────────────────────────────────────────────────
