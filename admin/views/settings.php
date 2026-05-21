@@ -255,6 +255,46 @@ $current_provider = xen_v( 'provider', 'openai' );
 
 			<hr class="xen-ai-divider" style="margin:24px 0;">
 
+			<h3 style="margin:0 0 12px 0;">🛡️ Abuse &amp; Cost Protection</h3>
+			<p class="xen-ai-help" style="margin-top:0;">
+				Optional safeguards against bot floods, quota exhaustion, and surprise API bills.
+				The plugin always enforces IP + session rate limits — these settings add extra layers.
+			</p>
+
+			<div class="xen-ai-field-row">
+				<label class="xen-ai-label" for="xen-fallback-message">Fallback Reply</label>
+				<div class="xen-ai-field-body">
+					<textarea id="xen-fallback-message" name="fallback_message"
+					          class="xen-ai-input-field" rows="2"
+					          placeholder="Shown to visitors when the AI API is over quota or unreachable."><?php echo esc_textarea( xen_v( 'fallback_message', "I'm a little busy at the moment! Please leave your name and email and I'll get back to you as soon as I can." ) ); ?></textarea>
+					<p class="xen-ai-help">Used automatically when the upstream AI returns quota / rate-limit / billing errors. Visitors never see the raw API error.</p>
+				</div>
+			</div>
+
+			<div class="xen-ai-field-row">
+				<label class="xen-ai-label" for="xen-turnstile-site">Cloudflare Turnstile Site Key</label>
+				<div class="xen-ai-field-body">
+					<input type="text" id="xen-turnstile-site" name="turnstile_site_key"
+					       class="xen-ai-input-field"
+					       value="<?php echo esc_attr( xen_v( 'turnstile_site_key' ) ); ?>"
+					       placeholder="0x4AAAAAAA…">
+					<p class="xen-ai-help">Optional. Leave empty to disable. Get a free key at <a href="https://dash.cloudflare.com/?to=/:account/turnstile" target="_blank" rel="noopener">Cloudflare Turnstile</a>.</p>
+				</div>
+			</div>
+
+			<div class="xen-ai-field-row">
+				<label class="xen-ai-label" for="xen-turnstile-secret">Cloudflare Turnstile Secret Key</label>
+				<div class="xen-ai-field-body">
+					<input type="password" id="xen-turnstile-secret" name="turnstile_secret_key"
+					       class="xen-ai-input-field"
+					       value="<?php echo xen_v( 'turnstile_secret_key' ) ? '••••••••' : ''; ?>"
+					       placeholder="0x4AAAAAAA…">
+					<p class="xen-ai-help">Required when a site key is set. Saved encrypted; leave the dots in place to keep the existing value.</p>
+				</div>
+			</div>
+
+			<hr class="xen-ai-divider" style="margin:24px 0;">
+
 			<div class="xen-ai-field-row">
 				<label class="xen-ai-label" style="color:#dc2626;">🗑️ Data &amp; Uninstall</label>
 				<div class="xen-ai-field-body">

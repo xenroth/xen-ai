@@ -56,7 +56,7 @@ class Xen_AI_Site_Content {
 	// ── Private helpers ───────────────────────────────────────────────────────
 
 	private function get_pages_and_posts_context( $query ) {
-		$cache_key = 'xen_sc_pp_' . md5( $query );
+		$cache_key = $this->make_cache_key( 'xen_sc_pp_', $query );
 		$cached    = get_transient( $cache_key );
 		if ( false !== $cached ) {
 			return $cached;
@@ -109,7 +109,7 @@ class Xen_AI_Site_Content {
 	}
 
 	private function get_products_context( $query ) {
-		$cache_key = 'xen_sc_wc_' . md5( $query );
+		$cache_key = $this->make_cache_key( 'xen_sc_wc_', $query );
 		$cached    = get_transient( $cache_key );
 		if ( false !== $cached ) {
 			return $cached;
@@ -178,6 +178,18 @@ class Xen_AI_Site_Content {
 
 		set_transient( $cache_key, $out, self::CACHE_TTL );
 		return $out;
+	}
+
+	/**
+	 * Build a stable cache key from a query by normalising it to a sorted
+	 * keyword set. Causes 'price', 'whats the price', 'tell me the price'
+	 * to all share one cache entry instead of three.
+	 */
+	private function make_cache_key( $prefix, $query ) {
+		$keywords = $this->extract_keywords( $query );
+		sort( $keywords );
+		$normalised = implode( '_', array_slice( $keywords, 0, 4 ) );
+		return $prefix . md5( $normalised );
 	}
 
 	private function extract_keywords( $text ) {

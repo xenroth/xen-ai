@@ -108,6 +108,10 @@ class Xen_AI_Handler {
 			$model    = $this->model;
 		}
 
+		// Enforce a context budget so a single oversized request can never blow
+		// past the model's context window or rack up surprise costs.
+		$messages = $this->trim_history_to_budget( $messages, $system );
+
 		$payload = [
 			'model'       => $model,
 			'messages'    => array_merge( [ [ 'role' => 'system', 'content' => $system ] ], $messages ),
@@ -164,6 +168,34 @@ class Xen_AI_Handler {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Drop oldest history turns until system + history fit a conservative
+	 * input-token budget (chars/4 ≈ tokens). This protects against context
+	 * window overflow AND runaway token costs on long conversations.
+	 */
+	private function trim_history_to_budget( array $messages, $system ) {
+		$model_input_chars = 80000;                   // ~20k input tokens — safe for gpt-4o (128k)
+		$output_reserve    = $this->max_tokens * 4;   // chars reserved for the reply
+		$budget            = $model_input_chars - mb_strlen( $system ) - $output_reserve;
+
+		if ( $budget < 2000 ) {
+			$budget = 2000; // never drop below a usable floor
+		}
+
+		$total = 0;
+		foreach ( $messages as $m ) {
+			$total += mb_strlen( (string) $m['content'] );
+		}
+
+		// Always keep the latest message (the visitor's current question).
+		while ( $total > $budget && count( $messages ) > 1 ) {
+			$dropped = array_shift( $messages );
+			$total  -= mb_strlen( (string) $dropped['content'] );
+		}
+
+		return $messages;
 	}
 
 	/**

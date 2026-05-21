@@ -85,7 +85,21 @@ $xen_avatar = function( $size, $bot_name, $bot_logo ) {
 			          rows="1"
 			          placeholder="<?php esc_attr_e( 'Type a message…', 'xen-ai' ); ?>"
 			          aria-label="<?php esc_attr_e( 'Your message', 'xen-ai' ); ?>"
-			          maxlength="1000"></textarea>
+			          maxlength="2000"></textarea>
+			<!-- Honeypot: hidden from humans, bots tend to fill it. -->
+			<input type="text" id="xen-ai-hp" name="xen_hp" value=""
+			       tabindex="-1" autocomplete="off" aria-hidden="true"
+			       style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
+			<?php
+			$ts_key = ! empty( $settings['turnstile_site_key'] ) ? $settings['turnstile_site_key'] : '';
+			if ( $ts_key ) :
+			?>
+			<div class="cf-turnstile"
+			     data-sitekey="<?php echo esc_attr( $ts_key ); ?>"
+			     data-size="invisible"
+			     data-callback="xenAITurnstileCallback"
+			     id="xen-ai-turnstile"></div>
+			<?php endif; ?>
 			<button id="xen-ai-send"
 			        class="xen-ai-send-btn"
 			        aria-label="<?php esc_attr_e( 'Send message', 'xen-ai' ); ?>">

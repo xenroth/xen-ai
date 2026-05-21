@@ -26,10 +26,27 @@ class Xen_AI_License {
 	const API_URL = 'https://api.xenroth.com/xen-ai/license-api.php';
 
 	/**
-	 * HMAC secret — must match HMAC_SECRET in license-api.php on your server.
-	 * This is what makes tokens tamper-proof. Keep this value private.
+	 * Legacy HMAC secret fallback. Production installs MUST override this by
+	 * defining XEN_AI_HMAC_SECRET in wp-config.php — the value below is only
+	 * used when no override is set and SHOULD be rotated on the license
+	 * server. Never commit a real production secret to source control.
 	 */
-	const HMAC_SECRET = 'x3N!rTh7@qL2mW9#pK5vY8&bZ1cJ4sF6';
+	const HMAC_SECRET = 'CHANGE_ME_IN_WP_CONFIG_WITH_XEN_AI_HMAC_SECRET';
+
+	/**
+	 * Resolve the active HMAC secret at runtime.
+	 * Priority: wp-config constant → wp_options override → legacy constant.
+	 */
+	private static function get_hmac_secret() {
+		if ( defined( 'XEN_AI_HMAC_SECRET' ) && '' !== XEN_AI_HMAC_SECRET ) {
+			return XEN_AI_HMAC_SECRET;
+		}
+		$stored = get_option( 'xen_ai_hmac_secret', '' );
+		if ( ! empty( $stored ) ) {
+			return $stored;
+		}
+		return self::HMAC_SECRET;
+	}
 
 	/** wp_options key that stores the encrypted license record. */
 	const OPTION_KEY  = 'xen_ai_license';
@@ -212,7 +229,7 @@ class Xen_AI_License {
 
 		// Re-compute the expected HMAC
 		$expected_sig = self::b64url_encode(
-			hash_hmac( 'sha256', $payload_b64, self::HMAC_SECRET, true )
+			hash_hmac( 'sha256', $payload_b64, self::get_hmac_secret(), true )
 		);
 
 		// Constant-time comparison to prevent timing attacks

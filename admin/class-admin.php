@@ -131,6 +131,10 @@ class Xen_AI_Admin {
 			'bot_logo_url'     => isset( $_POST['bot_logo_url'] ) ? esc_url_raw( wp_unslash( $_POST['bot_logo_url'] ) ) : '',
 			'disable_chat'     => ! empty( $_POST['disable_chat'] ),
 			'clean_uninstall'  => ! empty( $_POST['clean_uninstall'] ),
+			// Abuse/cost protection settings
+			'turnstile_site_key'   => isset( $_POST['turnstile_site_key'] )   ? sanitize_text_field( wp_unslash( $_POST['turnstile_site_key'] ) )   : '',
+			'turnstile_secret_key' => isset( $_POST['turnstile_secret_key'] ) ? sanitize_text_field( wp_unslash( $_POST['turnstile_secret_key'] ) ) : '',
+			'fallback_message'     => isset( $_POST['fallback_message'] )     ? sanitize_textarea_field( wp_unslash( $_POST['fallback_message'] ) ) : '',
 		];
 
 		// Validate provider value
@@ -144,6 +148,9 @@ class Xen_AI_Admin {
 		}
 		if ( '••••••••' === $settings['github_token'] && ! empty( $raw['github_token'] ) ) {
 			$settings['github_token'] = $raw['github_token'];
+		}
+		if ( '••••••••' === $settings['turnstile_secret_key'] && ! empty( $raw['turnstile_secret_key'] ) ) {
+			$settings['turnstile_secret_key'] = $raw['turnstile_secret_key'];
 		}
 
 		update_option( 'xen_ai_settings', $settings );

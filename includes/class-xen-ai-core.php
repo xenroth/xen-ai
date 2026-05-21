@@ -32,6 +32,12 @@ class Xen_AI_Core {
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
 		add_action( 'wp_footer',          [ $this, 'render_chat_widget' ] );
+
+		// Daily cleanup of expired rate-limit / lock / cache transients.
+		add_action( 'xen_ai_cleanup_transients', [ __CLASS__, 'cleanup_transients' ] );
+		if ( ! wp_next_scheduled( 'xen_ai_cleanup_transients' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'xen_ai_cleanup_transients' );
+		}
 	}
 
 	// ── Front-end assets ──────────────────────────────────────────────────────
@@ -58,6 +64,17 @@ class Xen_AI_Core {
 			true
 		);
 
+		// Optional Cloudflare Turnstile loader (only when a site key is configured).
+		if ( ! empty( $settings['turnstile_site_key'] ) ) {
+			wp_enqueue_script(
+				'cf-turnstile',
+				'https://challenges.cloudflare.com/turnstile/v0/api.js',
+				[],
+				null,
+				true
+			);
+		}
+
 		$accent       = ! empty( $settings['accent_color'] )     ? sanitize_hex_color( $settings['accent_color'] )       : '#4f46e5';
 		$greeting     = ! empty( $settings['greeting_message'] ) ? $settings['greeting_message']                         : "Hi there! \xf0\x9f\x91\x8b I\xe2\x80\x99m XEN, your AI assistant. How can I help you today?";
 		$bot_name     = ! empty( $settings['bot_name'] )         ? $settings['bot_name']                                 : 'XEN A.I';
@@ -75,6 +92,8 @@ class Xen_AI_Core {
 			'notifyDelay'  => $notify_delay,
 			'notifyMsg'    => $notify_msg,
 			'botLogoUrl'   => $bot_logo,
+			'turnstileKey' => ! empty( $settings['turnstile_site_key'] ) ? $settings['turnstile_site_key'] : '',
+			'maxChars'     => 2000,
 		] );
 	}
 
@@ -181,6 +200,9 @@ class Xen_AI_Core {
 				'max_tokens'       => 500,
 				'temperature'      => 0.7,
 				'disable_chat'     => false,
+				'turnstile_site_key'   => '',
+				'turnstile_secret_key' => '',
+				'fallback_message'     => "I'm a little busy at the moment! Please leave your name and email and I'll get back to you as soon as I can.",
 			] );
 		}
 
@@ -191,6 +213,26 @@ class Xen_AI_Core {
 
 	public static function deactivate() {
 		// Flush any cached KB transients
-		delete_transient( 'xen_ai_kb_all' );
+		delete_transient( 'xen_ai_kb_all' );		wp_clear_scheduled_hook( 'xen_ai_cleanup_transients' );
 	}
+
+	/**
+	 * Sweep expired rate-limit, lock, and cache transients so the wp_options
+	 * table does not bloat on high-traffic sites. Never touches license or
+	 * settings rows.
+	 */
+	public static function cleanup_transients() {
+		global $wpdb;
+
+		$wpdb->query(
+			"DELETE a, b FROM {$wpdb->options} a
+			 LEFT JOIN {$wpdb->options} b
+			   ON b.option_name = CONCAT( '_transient_timeout_', SUBSTRING( a.option_name, 12 ) )
+			 WHERE ( a.option_name LIKE '_transient_xen_rl_%'
+			     OR a.option_name LIKE '_transient_xen_si_%'
+			     OR a.option_name LIKE '_transient_xen_lock_%'
+			     OR a.option_name LIKE '_transient_xen_kb_ctx_%'
+			     OR a.option_name LIKE '_transient_xen_sc_%' )
+			   AND b.option_value < UNIX_TIMESTAMP()"
+		);	}
 }

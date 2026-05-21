@@ -20,7 +20,7 @@ class Xen_AI_Knowledge_Base {
 	public function add_entry( $title, $content, $source_type = 'file', $source = null, $file_type = null ) {
 		global $wpdb;
 
-		return $wpdb->insert(
+		$result = $wpdb->insert(
 			$this->table,
 			[
 				'title'       => sanitize_text_field( $title ),
@@ -32,11 +32,16 @@ class Xen_AI_Knowledge_Base {
 			],
 			[ '%s', '%s', '%s', '%s', '%s', '%s' ]
 		);
+
+		self::flush_context_cache();
+		return $result;
 	}
 
 	public function delete_entry( $id ) {
 		global $wpdb;
-		return $wpdb->delete( $this->table, [ 'id' => absint( $id ) ], [ '%d' ] );
+		$result = $wpdb->delete( $this->table, [ 'id' => absint( $id ) ], [ '%d' ] );
+		self::flush_context_cache();
+		return $result;
 	}
 
 	// ── Read ──────────────────────────────────────────────────────────────────
@@ -116,9 +121,20 @@ class Xen_AI_Knowledge_Base {
 	 * @return string
 	 */
 	public function get_context_for_query( $query, $max_chars = 3000 ) {
+		// Normalise the cache key so semantically similar queries share a cache slot.
+		$keywords = $this->extract_keywords( $query );
+		sort( $keywords );
+		$cache_key = 'xen_kb_ctx_' . md5( implode( '_', array_slice( $keywords, 0, 6 ) ) . '|' . $max_chars );
+
+		$cached = get_transient( $cache_key );
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
 		$rows = $this->search( $query );
 
 		if ( empty( $rows ) ) {
+			set_transient( $cache_key, '', 15 * MINUTE_IN_SECONDS );
 			return '';
 		}
 
@@ -141,7 +157,20 @@ class Xen_AI_Knowledge_Base {
 			$total_chars += $chunk_len;
 		}
 
+		set_transient( $cache_key, $context, 15 * MINUTE_IN_SECONDS );
 		return $context;
+	}
+
+	/**
+	 * Flush every cached KB context entry. Call after add/delete/edit of KB rows.
+	 */
+	public static function flush_context_cache() {
+		global $wpdb;
+		$wpdb->query(
+			"DELETE FROM {$wpdb->options}
+			 WHERE option_name LIKE '_transient_xen_kb_ctx_%'
+			    OR option_name LIKE '_transient_timeout_xen_kb_ctx_%'"
+		);
 	}
 
 	// ── Helpers ───────────────────────────────────────────────────────────────
