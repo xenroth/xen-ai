@@ -142,14 +142,15 @@ class Xen_AI_Admin {
 			$settings['provider'] = 'openai';
 		}
 
-		// Preserve masked placeholders — don't overwrite saved secrets with the display mask
-		if ( '••••••••' === $settings['api_key'] && ! empty( $raw['api_key'] ) ) {
+		// Preserve saved secrets: don't overwrite with the display mask OR an empty value.
+		// An empty POST value means the field wasn't changed, not that the user wants to clear it.
+		if ( ( '' === $settings['api_key'] || '••••••••' === $settings['api_key'] ) && ! empty( $raw['api_key'] ) ) {
 			$settings['api_key'] = $raw['api_key'];
 		}
-		if ( '••••••••' === $settings['github_token'] && ! empty( $raw['github_token'] ) ) {
+		if ( ( '' === $settings['github_token'] || '••••••••' === $settings['github_token'] ) && ! empty( $raw['github_token'] ) ) {
 			$settings['github_token'] = $raw['github_token'];
 		}
-		if ( '••••••••' === $settings['turnstile_secret_key'] && ! empty( $raw['turnstile_secret_key'] ) ) {
+		if ( ( '' === $settings['turnstile_secret_key'] || '••••••••' === $settings['turnstile_secret_key'] ) && ! empty( $raw['turnstile_secret_key'] ) ) {
 			$settings['turnstile_secret_key'] = $raw['turnstile_secret_key'];
 		}
 
