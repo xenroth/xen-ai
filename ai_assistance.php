@@ -37,6 +37,7 @@ function xen_ai_uploads_dir() {
 $xen_ai_files = [
 	'includes/class-xen-ai-core.php',
 	'includes/class-knowledge-base.php',
+	'includes/class-site-content.php',
 	'includes/class-ai-handler.php',
 	'includes/class-file-processor.php',
 	'includes/class-chat-ajax.php',

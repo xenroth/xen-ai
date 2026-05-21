@@ -19,10 +19,17 @@ $configured    = $ai->is_configured();
 		<p class="xen-ai-subtitle">AI-powered chat assistant &amp; lead capture for your WordPress site.</p>
 	</div>
 
+	<?php
+	$provider_label = ( 'github' === ( $settings['provider'] ?? 'openai' ) )
+		? 'GitHub Personal Access Token'
+		: 'OpenAI API key';
+	?>
 	<?php if ( ! $configured ) : ?>
 	<div class="xen-ai-notice xen-ai-notice-warn">
 		<strong>⚠ Setup required:</strong>
-		<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-settings' ) ); ?>">Add your OpenAI API key</a>
+		<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-settings' ) ); ?>">
+			Add your <?php echo esc_html( $provider_label ); ?>
+		</a>
 		to enable the AI chat assistant.
 	</div>
 	<?php endif; ?>
@@ -68,6 +75,62 @@ $configured    = $ai->is_configured();
 		</div>
 	</div>
 
+	<!-- Free Features -->
+	<div class="xen-ai-card xen-ai-mt">
+		<h2 class="xen-ai-card-title">✅ Included in Free</h2>
+		<div class="xen-ai-free-features-grid">
+
+			<div class="xen-ai-free-feature">
+				<span>💬</span>
+				<div><strong>AI Chat Widget</strong>
+				<p>Floating chat bubble auto-injected on all pages. Animated notification bubble encourages interaction.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>📚</span>
+				<div><strong>Knowledge Base</strong>
+				<p>Upload PDFs, DOCX, DOC, TXT files or scrape content from any URL. AI answers from your content first.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>🤖</span>
+				<div><strong>Dual AI Provider</strong>
+				<p>Switch between OpenAI (paid) and GitHub Models (free with a GitHub account). Both use the same settings.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>🛒</span>
+				<div><strong>Live Site Content Awareness</strong>
+				<p>AI automatically reads your published pages, blog posts, and WooCommerce products — including price, stock, and ordering instructions.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>👤</span>
+				<div><strong>Lead Capture</strong>
+				<p>AI naturally collects visitor name &amp; email through conversation and saves them to the Leads dashboard.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>🎨</span>
+				<div><strong>Custom Branding</strong>
+				<p>Set the bot name, accent colour, and upload your own logo/avatar image for the chat widget.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>📊</span>
+				<div><strong>Leads &amp; Conversations</strong>
+				<p>Full conversation history, lead viewer with modal, CSV export, and per-conversation delete.</p></div>
+			</div>
+
+			<div class="xen-ai-free-feature">
+				<span>🔒</span>
+				<div><strong>Rate Limiting &amp; Security</strong>
+				<p>Session-based rate limiting (20 msg/hr), nonce verification on every request, SSRF-safe URL scraper.</p></div>
+			</div>
+
+		</div>
+	</div>
+
 	<!-- Pro Features upsell -->
 	<div class="xen-ai-card xen-ai-mt xen-ai-pro-card">
 		<div class="xen-ai-pro-header">
@@ -110,19 +173,32 @@ $configured    = $ai->is_configured();
 			<span class="xen-ai-pro-price">₱999 <small>one-time</small></span>
 			<button type="button" class="xen-ai-btn xen-ai-btn-pro" disabled>🔒 Upgrade to Pro — Coming Soon</button>
 		</div>
+
+		<div class="xen-ai-pro-contact">
+			<span>📩 Interested? Reach out to the developer:</span>
+			<a href="mailto:me@xenroth.com">me@xenroth.com</a>
+			<span class="xen-ai-pro-contact-sep">·</span>
+			<a href="tel:+639150388448">+63 915 038 8448</a>
+		</div>
 	</div>
 
 	<!-- Status card -->
 	<div class="xen-ai-card xen-ai-mt">
 		<h2 class="xen-ai-card-title">System Status</h2>
+		<?php
+		$provider_name = 'github' === ( $settings['provider'] ?? 'openai' ) ? 'GitHub Models' : 'OpenAI';
+		$active_model  = 'github' === ( $settings['provider'] ?? 'openai' )
+			? ( $settings['github_model'] ?? 'gpt-4o' )
+			: ( $settings['model']        ?? 'gpt-3.5-turbo' );
+		?>
 		<table class="xen-ai-status-table">
 			<tr>
-				<td><span class="xen-ai-dot <?php echo $configured ? 'green' : 'red'; ?>"></span> OpenAI API</td>
+				<td><span class="xen-ai-dot <?php echo $configured ? 'green' : 'red'; ?>"></span> <?php echo esc_html( $provider_name ); ?></td>
 				<td><strong><?php echo $configured ? 'Connected' : 'Not configured'; ?></strong></td>
 			</tr>
 			<tr>
 				<td><span class="xen-ai-dot green"></span> AI Model</td>
-				<td><strong><?php echo esc_html( $settings['model'] ?? 'gpt-3.5-turbo' ); ?></strong></td>
+				<td><strong><?php echo esc_html( $active_model ); ?></strong></td>
 			</tr>
 			<tr>
 				<td><span class="xen-ai-dot <?php echo empty( $settings['disable_chat'] ) ? 'green' : 'red'; ?>"></span> Chat Widget</td>

@@ -24,32 +24,61 @@
   });
 
   /* ─────────────────────────────────────────────────────── */
-  /* Bot logo uploader (WP Media Library)                   */
+  /* Bot logo uploader (direct file → WP Media Library)     */
   /* ─────────────────────────────────────────────────────── */
-  var xenLogoFrame;
 
+  // Open native file picker when button is clicked
   $(document).on('click', '#xen-upload-logo-btn', function (e) {
     e.preventDefault();
-    if (xenLogoFrame) { xenLogoFrame.open(); return; }
+    $('#xen-logo-file-input').trigger('click');
+  });
 
-    xenLogoFrame = wp.media({
-      title:    'Choose Bot Logo',
-      button:   { text: 'Use this image' },
-      library:  { type: 'image' },
-      multiple: false
+  // Upload the chosen file via AJAX
+  $(document).on('change', '#xen-logo-file-input', function () {
+    var file = this.files && this.files[0];
+    if (!file) return;
+
+    if (!file.type.match(/^image\//)) {
+      alert('Please select an image file (JPEG, PNG, GIF or WebP).');
+      return;
+    }
+
+    var $btn      = $('#xen-upload-logo-btn');
+    var $preview  = $('#xen-logo-preview');
+    var $remove   = $('#xen-remove-logo-btn');
+    var origLabel = $btn.html();
+
+    $btn.prop('disabled', true).html('⏳ Uploading…');
+
+    var fd = new FormData();
+    fd.append('action', 'xen_ai_upload_logo');
+    fd.append('nonce',  $('#xen-settings-nonce').val());
+    fd.append('logo_file', file);
+
+    $.ajax({
+      url:         xenAIAdmin.ajaxUrl,
+      type:        'POST',
+      data:        fd,
+      processData: false,
+      contentType: false,
+      success: function (res) {
+        if (res.success) {
+          var url = res.data.url;
+          $('#xen-bot-logo-url').val(url);
+          $preview.html('<img src="' + $('<div>').text(url).html() + '" alt="Bot logo" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">');
+          $remove.show();
+        } else {
+          alert((res.data && res.data.message) || 'Upload failed. Please try again.');
+        }
+      },
+      error: function () {
+        alert('Upload failed. Please check your connection and try again.');
+      },
+      complete: function () {
+        $btn.prop('disabled', false).html(origLabel);
+        $('#xen-logo-file-input').val(''); // reset so same file can be re-selected
+      }
     });
-
-    xenLogoFrame.on('select', function () {
-      var attachment = xenLogoFrame.state().get('selection').first().toJSON();
-      var url = attachment.url;
-      $('#xen-bot-logo-url').val(url);
-      $('#xen-logo-preview')
-        .html('<img src="' + $('<div>').text(url).html() + '" alt="Bot logo">')
-        .find('img').css({ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' });
-      $('#xen-remove-logo-btn').show();
-    });
-
-    xenLogoFrame.open();
   });
 
   $(document).on('click', '#xen-remove-logo-btn', function () {

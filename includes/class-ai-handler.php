@@ -54,10 +54,23 @@ class Xen_AI_Handler {
 	// ── Public API ────────────────────────────────────────────────────────────
 
 	public function is_configured() {
+		// Auto-correct: GitHub PAT accidentally saved in the OpenAI api_key field.
+		if ( 'openai' === $this->provider && $this->looks_like_github_pat( $this->api_key ) ) {
+			$this->provider     = 'github';
+			$this->github_token = $this->api_key;
+			$this->api_key      = '';
+		}
 		if ( 'github' === $this->provider ) {
 			return ! empty( $this->github_token );
 		}
 		return ! empty( $this->api_key );
+	}
+
+	/** Returns true if a string looks like a GitHub PAT (classic or fine-grained). */
+	private function looks_like_github_pat( $value ) {
+		if ( empty( $value ) ) return false;
+		// Fine-grained: github_pat_   Classic: ghp_   OAuth: gho_   Actions: ghs_
+		return (bool) preg_match( '/^(github_pat_|ghp_|gho_|ghs_)/i', $value );
 	}
 
 	public function get_provider() {
@@ -177,6 +190,15 @@ class Xen_AI_Handler {
 		$p .= "2. **General knowledge fallback** — For topics not covered in the knowledge base, answer using your general training data.\n";
 		$p .= "3. Be warm, concise, and conversational. Keep replies to 2–4 sentences unless more detail is clearly needed.\n";
 		$p .= "4. If you genuinely do not know something, say so honestly.\n\n";
+
+		if ( class_exists( 'WooCommerce' ) ) {
+			$p .= "## Products & Ordering\n";
+			$p .= "When users ask about products, pricing, availability, or how to place an order:\n";
+			$p .= "- Share specific product details (name, price, stock, and direct link) from the site content below.\n";
+			$p .= "- Walk them step-by-step through the checkout process.\n";
+			$p .= "- Always include the product URL when mentioning a product.\n";
+			$p .= "- For out-of-stock items, suggest contacting the store or checking back later.\n\n";
+		}
 
 		$p .= "## Lead Capture (IMPORTANT)\n";
 		$p .= "- Naturally and politely ask for the user's **name** early in the conversation (e.g., \"By the way, what's your name so I can address you better?\"). Ask only once.\n";

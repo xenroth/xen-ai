@@ -181,8 +181,7 @@ $current_provider = xen_v( 'provider', 'openai' );
 								<span class="xen-logo-placeholder">&#x26A1;</span>
 							<?php endif; ?>
 						</div>
-						<div style="display:flex;flex-direction:column;gap:6px;">
-							<button type="button" id="xen-upload-logo-btn" class="xen-ai-btn xen-ai-btn-secondary xen-ai-btn-sm">
+						<div style="display:flex;flex-direction:column;gap:6px;">						<input type="file" id="xen-logo-file-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none;">							<button type="button" id="xen-upload-logo-btn" class="xen-ai-btn xen-ai-btn-secondary xen-ai-btn-sm">
 								&#x1F4C2; Upload Image
 							</button>
 							<button type="button" id="xen-remove-logo-btn" class="xen-ai-btn xen-ai-btn-outline xen-ai-btn-sm" <?php echo ! xen_v( 'bot_logo_url' ) ? 'style="display:none"' : ''; ?>>

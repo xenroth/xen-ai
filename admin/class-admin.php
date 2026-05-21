@@ -20,6 +20,7 @@ class Xen_AI_Admin {
 		add_action( 'wp_ajax_xen_ai_export_leads',   [ $this, 'ajax_export_leads' ] );
 		add_action( 'wp_ajax_xen_ai_delete_convo',    [ $this, 'ajax_delete_convo' ] );
 		add_action( 'wp_ajax_xen_ai_get_messages',    [ $this, 'ajax_get_messages' ] );
+		add_action( 'wp_ajax_xen_ai_upload_logo',     [ $this, 'ajax_upload_logo' ] );
 	}
 
 	// ── Menus ─────────────────────────────────────────────────────────────────
@@ -311,6 +312,40 @@ class Xen_AI_Admin {
 	}
 
 	// ── Utility ───────────────────────────────────────────────────────────────
+
+	// ── Utility ─────────────────────────────────────────────────────────────────────────
+
+	public function ajax_upload_logo() {
+		$this->verify_admin_nonce();
+
+		if ( empty( $_FILES['logo_file'] ) || UPLOAD_ERR_OK !== (int) $_FILES['logo_file']['error'] ) {
+			wp_send_json_error( [ 'message' => __( 'No file received or upload error.', 'xen-ai' ) ] );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		// Validate MIME type before processing
+		$allowed = [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp' ];
+		$checked = wp_check_filetype_and_ext(
+			$_FILES['logo_file']['tmp_name'],
+			$_FILES['logo_file']['name']
+		);
+		if ( ! $checked['type'] || ! in_array( $checked['type'], $allowed, true ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid file type. Allowed: JPEG, PNG, GIF, WebP.', 'xen-ai' ) ] );
+		}
+
+		// Add to WordPress Media Library (post_parent = 0 = unattached)
+		$attachment_id = media_handle_upload( 'logo_file', 0 );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			wp_send_json_error( [ 'message' => $attachment_id->get_error_message() ] );
+		}
+
+		$url = wp_get_attachment_url( $attachment_id );
+		wp_send_json_success( [ 'url' => $url ] );
+	}
 
 	private function check_cap() {
 		if ( ! current_user_can( 'manage_options' ) ) {

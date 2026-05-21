@@ -86,7 +86,12 @@ class Xen_AI_Chat_Ajax {
 
 		// ── Retrieve KB context ────────────────────────────────────────────────
 		$kb      = new Xen_AI_Knowledge_Base();
-		$context = $kb->get_context_for_query( $message );
+		$kb_ctx  = $kb->get_context_for_query( $message );
+
+		// ── Retrieve live site content (pages, posts, WooCommerce products) ───
+		$site     = new Xen_AI_Site_Content();
+		$site_ctx = $site->get_context_for_query( $message );
+		$context  = trim( $kb_ctx . ( $kb_ctx && $site_ctx ? "\n\n" : '' ) . $site_ctx );
 
 		// ── Call AI ────────────────────────────────────────────────────────────
 		$ai       = new Xen_AI_Handler();
