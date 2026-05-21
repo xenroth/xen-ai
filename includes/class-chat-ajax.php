@@ -102,8 +102,12 @@ class Xen_AI_Chat_Ajax {
 		$context = apply_filters( 'xen_ai_chat_context', $context, $message );
 
 		// ── Call AI ────────────────────────────────────────────────────────────
+		$lead_status = [
+			'has_name'  => ! empty( $conv->user_name ),
+			'has_email' => ! empty( $conv->user_email ),
+		];
 		$ai       = new Xen_AI_Handler();
-		$raw      = $ai->get_response( $messages, $context );
+		$raw      = $ai->get_response( $messages, $context, $lead_status );
 
 		if ( is_wp_error( $raw ) ) {
 			wp_send_json_error( [ 'message' => $raw->get_error_message() ] );

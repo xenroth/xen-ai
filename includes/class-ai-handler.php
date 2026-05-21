@@ -80,9 +80,10 @@ class Xen_AI_Handler {
 	/**
 	 * @param array  $messages          OpenAI-format message history (role/content pairs).
 	 * @param string $knowledge_context Pre-retrieved KB context string.
+	 * @param array  $conv_state        Optional: keys 'has_name' (bool), 'has_email' (bool).
 	 * @return string|WP_Error          Raw AI response text (may contain [NAME]/[EMAIL] markers).
 	 */
-	public function get_response( array $messages, $knowledge_context = '' ) {
+	public function get_response( array $messages, $knowledge_context = '', $conv_state = [] ) {
 		if ( ! $this->is_configured() ) {
 			if ( 'github' === $this->provider ) {
 				return new WP_Error( 'no_token', __( 'GitHub token is not configured. Please add it under XEN A.I → Settings.', 'xen-ai' ) );
@@ -94,7 +95,7 @@ class Xen_AI_Handler {
 		$bot_name = ! empty( $s['bot_name'] )      ? $s['bot_name']      : 'XEN A.I';
 		$custom   = ! empty( $s['system_prompt'] ) ? $s['system_prompt'] : '';
 
-		$system = $this->build_system_prompt( $bot_name, $knowledge_context, $custom );
+		$system = $this->build_system_prompt( $bot_name, $knowledge_context, $custom, $conv_state );
 
 		// Resolve endpoint + auth token
 		if ( 'github' === $this->provider ) {
@@ -176,7 +177,10 @@ class Xen_AI_Handler {
 
 	// ── Internals ─────────────────────────────────────────────────────────────
 
-	private function build_system_prompt( $bot_name, $knowledge_context, $custom_instructions ) {
+	private function build_system_prompt( $bot_name, $knowledge_context, $custom_instructions, $conv_state = [] ) {
+		$has_name  = ! empty( $conv_state['has_name'] );
+		$has_email = ! empty( $conv_state['has_email'] );
+
 		$site_name = get_bloginfo( 'name' );
 		$site_desc = get_bloginfo( 'description' );
 
@@ -200,12 +204,26 @@ class Xen_AI_Handler {
 			$p .= "- For out-of-stock items, suggest contacting the store or checking back later.\n\n";
 		}
 
-		$p .= "## Visitor Greeting & Contact Follow-up\n";
-		$p .= "- Early in the conversation, warmly introduce yourself and ask what the visitor's name is so you can address them personally. Do this once.\n";
-		$p .= "- If a visitor expresses strong interest in a product, service, or wants more information sent to them, you may politely ask for a contact email. Do this once and only if it feels natural.\n";
-		$p .= "- When the visitor shares their name, include this token on its own line at the very end of your message: [NAME: <value>]\n";
-		$p .= "- When the visitor shares an email address, include this token on its own line at the very end of your message: [EMAIL: <value>]\n";
-		$p .= "- These tokens are used internally by the site system and will not be shown to the visitor.\n\n";
+		$p .= "## Visitor Name & Contact\n";
+
+		if ( ! $has_name ) {
+			$p .= "- You do NOT yet know the visitor's name. Your FIRST priority in this conversation is to naturally ask for it. ";
+			$p .= "On your very first reply, after a brief greeting, ask something like: \"By the way, what's your name so I can address you personally?\" — weave it in naturally, not as a standalone question. Ask only once.\n";
+			$p .= "- When the visitor provides their name, immediately acknowledge it warmly and use it going forward.\n";
+			$p .= "- When the visitor shares their name, include this token on its own line at the very end of your message: [NAME: <value>]\n";
+		} else {
+			$p .= "- You already know the visitor's name. Do NOT ask for it again. Address them by name naturally when appropriate.\n";
+		}
+
+		if ( ! $has_email ) {
+			$p .= "- After some natural back-and-forth — once you have helped with their main question or they show clear interest — politely ask for their email once, only if it feels natural. ";
+			$p .= "For example: \"Would you like me to send you more details or follow up? If so, may I have your email address?\" Do NOT ask for the email in the first 1–2 messages.\n";
+			$p .= "- When the visitor shares an email address, include this token on its own line at the very end of your message: [EMAIL: <value>]\n";
+		} else {
+			$p .= "- You already have the visitor's email address. Do NOT ask for it again.\n";
+		}
+
+		$p .= "- These [NAME] and [EMAIL] tokens are used internally and will never be visible to the visitor.\n\n";
 
 		if ( ! empty( $knowledge_context ) ) {
 			$p .= "## Website Knowledge Base\n";
