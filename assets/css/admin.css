@@ -429,6 +429,25 @@
   font-size: 0.9rem;
 }
 
+/* ── Danger Zone ───────────────────────────────────────── */
+.xen-ai-danger-zone {
+  border-color: #fee2e2 !important;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 60%) !important;
+}
+.xen-ai-danger-zone .xen-ai-card-title { color: #dc2626; }
+.xen-ai-btn-danger {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: var(--xen-radius-sm, 6px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.xen-ai-btn-danger:hover { background: #b91c1c; }
+.xen-ai-divider { border: none; border-top: 1px solid var(--xen-border, #e5e7eb); }
+
 /* ── Modal ──────────────────────────────────────────────── */
 .xen-ai-modal { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; }
 .xen-ai-modal-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.4); }

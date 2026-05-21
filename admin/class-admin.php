@@ -23,6 +23,7 @@ class Xen_AI_Admin {
 		add_action( 'wp_ajax_xen_ai_upload_logo',     [ $this, 'ajax_upload_logo' ] );
 		add_action( 'wp_ajax_xen_ai_activate_license',   [ $this, 'ajax_activate_license' ] );
 		add_action( 'wp_ajax_xen_ai_deactivate_license', [ $this, 'ajax_deactivate_license' ] );
+		add_action( 'wp_ajax_xen_ai_wipe_data',          [ $this, 'ajax_wipe_data' ] );
 	}
 
 	// ── Menus ─────────────────────────────────────────────────────────────────
@@ -129,6 +130,7 @@ class Xen_AI_Admin {
 			'temperature'      => isset( $_POST['temperature'] )      ? min( 2.0, max( 0.0, (float) $_POST['temperature'] ) )              : 0.7,
 			'bot_logo_url'     => isset( $_POST['bot_logo_url'] ) ? esc_url_raw( wp_unslash( $_POST['bot_logo_url'] ) ) : '',
 			'disable_chat'     => ! empty( $_POST['disable_chat'] ),
+			'clean_uninstall'  => ! empty( $_POST['clean_uninstall'] ),
 		];
 
 		// Validate provider value
@@ -353,6 +355,58 @@ class Xen_AI_Admin {
 
 		$url = wp_get_attachment_url( $attachment_id );
 		wp_send_json_success( [ 'url' => $url ] );
+	}
+
+	public function ajax_wipe_data() {
+		$this->verify_admin_nonce();
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [ 'message' => __( 'Permission denied.', 'xen-ai' ) ] );
+		}
+
+		global $wpdb;
+
+		// Drop custom tables
+		$tables = [
+			$wpdb->prefix . 'xen_ai_messages',
+			$wpdb->prefix . 'xen_ai_conversations',
+			$wpdb->prefix . 'xen_ai_knowledge',
+		];
+		foreach ( $tables as $table ) {
+			$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		}
+
+		// Delete options
+		delete_option( 'xen_ai_license' );
+		delete_option( 'xen_ai_db_version' );
+		// Keep xen_ai_settings so the admin isn't left with a broken UI
+
+		// Delete transients
+		delete_transient( 'xen_ai_kb_all' );
+		delete_transient( 'xen_ai_license_valid' );
+		delete_transient( 'xen_ai_gh_release' );
+		$wpdb->query(
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_xen_ai_site_%' OR option_name LIKE '_transient_timeout_xen_ai_site_%'"
+		); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		// Remove private uploads folder
+		$upload_dir = wp_upload_dir();
+		$xen_dir    = trailingslashit( $upload_dir['basedir'] ) . 'xen-ai';
+		if ( is_dir( $xen_dir ) ) {
+			$items = new RecursiveIteratorIterator(
+				new RecursiveDirectoryIterator( $xen_dir, RecursiveDirectoryIterator::SKIP_DOTS ),
+				RecursiveIteratorIterator::CHILD_FIRST
+			);
+			foreach ( $items as $item ) {
+				$item->isDir() ? rmdir( $item->getRealPath() ) : unlink( $item->getRealPath() );
+			}
+			rmdir( $xen_dir );
+		}
+
+		// Re-run activation to rebuild tables with clean state
+		Xen_AI_Core::activate();
+
+		wp_send_json_success( [ 'message' => __( 'All XEN A.I data has been wiped. Tables have been recreated fresh.', 'xen-ai' ) ] );
 	}
 
 	private function check_cap() {
