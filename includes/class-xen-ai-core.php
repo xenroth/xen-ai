@@ -89,10 +89,19 @@ class Xen_AI_Core {
 	// ── DB migration ─────────────────────────────────────────────────────────
 
 	private function maybe_upgrade_db() {
-		if ( get_option( 'xen_ai_db_version' ) === XEN_AI_VERSION ) {
-			return;
+		global $wpdb;
+		$table = $wpdb->prefix . 'xen_ai_conversations';
+
+		// Run full dbDelta when version is behind.
+		if ( get_option( 'xen_ai_db_version' ) !== XEN_AI_VERSION ) {
+			self::activate();
 		}
-		self::activate();
+
+		// Safety-net: add visitor_ip if dbDelta skipped it on existing installs.
+		$columns = $wpdb->get_col( "SHOW COLUMNS FROM {$table}", 0 );
+		if ( is_array( $columns ) && ! in_array( 'visitor_ip', $columns, true ) ) {
+			$wpdb->query( "ALTER TABLE {$table} ADD COLUMN visitor_ip varchar(45) DEFAULT NULL AFTER user_email" );
+		}
 	}
 
 	// ── Activation ────────────────────────────────────────────────────────────

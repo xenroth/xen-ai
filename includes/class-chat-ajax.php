@@ -36,7 +36,8 @@ class Xen_AI_Chat_Ajax {
 		$page_url    = isset( $_POST['page_url'] ) ? esc_url_raw( wp_unslash( $_POST['page_url'] ) ) : '';
 		$visitor_ip  = $this->get_visitor_ip();
 
-		$wpdb->insert(
+		// Try insert with visitor_ip; fall back without it if column is missing (pre-migration).
+		$inserted = $wpdb->insert(
 			$this->conv_table,
 			[
 				'session_id' => $session_id,
@@ -45,6 +46,21 @@ class Xen_AI_Chat_Ajax {
 			],
 			[ '%s', '%s', '%s' ]
 		);
+
+		if ( false === $inserted ) {
+			$inserted = $wpdb->insert(
+				$this->conv_table,
+				[
+					'session_id' => $session_id,
+					'page_url'   => $page_url,
+				],
+				[ '%s', '%s' ]
+			);
+		}
+
+		if ( false === $inserted ) {
+			wp_send_json_error( [ 'message' => __( 'Could not start session. Please refresh and try again.', 'xen-ai' ) ] );
+		}
 
 		$response = apply_filters( 'xen_ai_session_response', [
 			'session_id' => $session_id,
