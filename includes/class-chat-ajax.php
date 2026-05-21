@@ -32,16 +32,18 @@ class Xen_AI_Chat_Ajax {
 
 		global $wpdb;
 
-		$session_id = wp_generate_uuid4();
-		$page_url   = isset( $_POST['page_url'] ) ? esc_url_raw( wp_unslash( $_POST['page_url'] ) ) : '';
+		$session_id  = wp_generate_uuid4();
+		$page_url    = isset( $_POST['page_url'] ) ? esc_url_raw( wp_unslash( $_POST['page_url'] ) ) : '';
+		$visitor_ip  = $this->get_visitor_ip();
 
 		$wpdb->insert(
 			$this->conv_table,
 			[
 				'session_id' => $session_id,
 				'page_url'   => $page_url,
+				'visitor_ip' => $visitor_ip,
 			],
-			[ '%s', '%s' ]
+			[ '%s', '%s', '%s' ]
 		);
 
 		$response = apply_filters( 'xen_ai_session_response', [
@@ -208,5 +210,38 @@ class Xen_AI_Chat_Ajax {
 
 		set_transient( $key, $count + 1, HOUR_IN_SECONDS );
 		return false;
+	}
+
+	/**
+	 * Resolve the real visitor IP, respecting common proxy headers.
+	 * REMOTE_ADDR is used as the fallback and can be fully trusted.
+	 */
+	private function get_visitor_ip() {
+		// Ordered by reliability; first non-empty value wins.
+		$candidates = [];
+
+		// X-Forwarded-For may contain a comma-separated chain; take the first address.
+		if ( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$parts        = explode( ',', wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) );
+			$candidates[] = trim( $parts[0] );
+		}
+
+		if ( ! empty( $_SERVER['HTTP_X_REAL_IP'] ) ) {
+			$candidates[] = trim( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
+		}
+
+		// Always add REMOTE_ADDR as the authoritative fallback.
+		if ( ! empty( $_SERVER['REMOTE_ADDR'] ) ) {
+			$candidates[] = trim( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+		}
+
+		foreach ( $candidates as $ip ) {
+			// Validate it is actually an IP address.
+			if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				return sanitize_text_field( $ip );
+			}
+		}
+
+		return '';
 	}
 }

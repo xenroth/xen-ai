@@ -294,9 +294,10 @@ class Xen_AI_Admin {
 		global $wpdb;
 		$table = $wpdb->prefix . 'xen_ai_conversations';
 		$rows  = $wpdb->get_results(
-			"SELECT user_name, user_email, page_url, created_at
+			"SELECT user_name, user_email, visitor_ip, page_url, created_at
 			 FROM {$table}
 			 WHERE user_email IS NOT NULL AND user_email != ''
+			    OR user_name  IS NOT NULL AND user_name  != ''
 			 ORDER BY created_at DESC"
 		);
 
@@ -306,12 +307,13 @@ class Xen_AI_Admin {
 		header( 'Expires: 0' );
 
 		$out = fopen( 'php://output', 'w' );
-		fputcsv( $out, [ 'Name', 'Email', 'Page URL', 'Date' ] );
+		fputcsv( $out, [ 'Name', 'Email', 'IP Address', 'Page URL', 'Date' ] );
 
 		foreach ( $rows as $r ) {
 			fputcsv( $out, [
 				$r->user_name  ?? '',
 				$r->user_email ?? '',
+				$r->visitor_ip ?? '',
 				$r->page_url   ?? '',
 				$r->created_at,
 			] );

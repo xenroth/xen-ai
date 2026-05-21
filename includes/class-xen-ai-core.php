@@ -23,6 +23,7 @@ class Xen_AI_Core {
 	// ── Boot ──────────────────────────────────────────────────────────────────
 
 	public function init() {
+		$this->maybe_upgrade_db();
 		new Xen_AI_Chat_Ajax();
 
 		if ( is_admin() ) {
@@ -85,6 +86,15 @@ class Xen_AI_Core {
 		include XEN_AI_PLUGIN_DIR . 'admin/views/chat-widget.php';
 	}
 
+	// ── DB migration ─────────────────────────────────────────────────────────
+
+	private function maybe_upgrade_db() {
+		if ( get_option( 'xen_ai_db_version' ) === XEN_AI_VERSION ) {
+			return;
+		}
+		self::activate();
+	}
+
 	// ── Activation ────────────────────────────────────────────────────────────
 
 	public static function activate() {
@@ -113,6 +123,7 @@ class Xen_AI_Core {
 			session_id   varchar(100)        NOT NULL,
 			user_name    varchar(100)                 DEFAULT NULL,
 			user_email   varchar(150)                 DEFAULT NULL,
+			visitor_ip   varchar(45)                  DEFAULT NULL,
 			page_url     varchar(1000)                DEFAULT NULL,
 			created_at   datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			updated_at   datetime            NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
