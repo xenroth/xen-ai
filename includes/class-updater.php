@@ -203,28 +203,61 @@ class Xen_AI_Updater {
 			return $cached ?: null; // '0' stored on failure to avoid hammering the API
 		}
 
-		$url      = 'https://api.github.com/repos/' . self::GH_USER . '/' . self::GH_REPO . '/releases/latest';
-		$response = wp_remote_get( $url, [
+		$headers = [
 			'timeout'    => 10,
 			'user-agent' => 'XEN-AI-Updater/' . XEN_AI_VERSION . '; ' . get_site_url(),
 			'headers'    => [ 'Accept' => 'application/vnd.github+json' ],
-		] );
+		];
 
-		if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
-			// Cache a failure briefly (1 hour) so we don't hammer GitHub on every page load
-			set_transient( self::TRANSIENT, '0', HOUR_IN_SECONDS );
-			return null;
+		// ── Try /releases/latest first (published releases only) ──────────────
+		$url      = 'https://api.github.com/repos/' . self::GH_USER . '/' . self::GH_REPO . '/releases/latest';
+		$response = wp_remote_get( $url, $headers );
+
+		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+			$release = json_decode( wp_remote_retrieve_body( $response ), true );
+			if ( ! empty( $release['tag_name'] ) ) {
+				set_transient( self::TRANSIENT, $release, self::CACHE_TTL );
+				return $release;
+			}
 		}
 
-		$release = json_decode( wp_remote_retrieve_body( $response ), true );
+		// ── Fallback: fetch the releases list (catches draft/pre-releases too) ──
+		$url      = 'https://api.github.com/repos/' . self::GH_USER . '/' . self::GH_REPO . '/releases?per_page=5';
+		$response = wp_remote_get( $url, $headers );
 
-		if ( empty( $release['tag_name'] ) ) {
-			set_transient( self::TRANSIENT, '0', HOUR_IN_SECONDS );
-			return null;
+		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+			$list = json_decode( wp_remote_retrieve_body( $response ), true );
+			if ( is_array( $list ) && ! empty( $list[0]['tag_name'] ) ) {
+				$release = $list[0];
+				set_transient( self::TRANSIENT, $release, self::CACHE_TTL );
+				return $release;
+			}
 		}
 
-		set_transient( self::TRANSIENT, $release, self::CACHE_TTL );
-		return $release;
+		// ── Fallback: try the tags API so un-released tags are still detected ──
+		$url      = 'https://api.github.com/repos/' . self::GH_USER . '/' . self::GH_REPO . '/tags?per_page=5';
+		$response = wp_remote_get( $url, $headers );
+
+		if ( ! is_wp_error( $response ) && wp_remote_retrieve_response_code( $response ) === 200 ) {
+			$tags = json_decode( wp_remote_retrieve_body( $response ), true );
+			if ( is_array( $tags ) && ! empty( $tags[0]['name'] ) ) {
+				// Synthesise a minimal release-like array from the tag.
+				$release = [
+					'tag_name'     => $tags[0]['name'],
+					'html_url'     => 'https://github.com/' . self::GH_USER . '/' . self::GH_REPO . '/releases/tag/' . rawurlencode( $tags[0]['name'] ),
+					'zipball_url'  => $tags[0]['zipball_url'] ?? '',
+					'published_at' => '',
+					'body'         => '',
+					'assets'       => [],
+				];
+				set_transient( self::TRANSIENT, $release, self::CACHE_TTL );
+				return $release;
+			}
+		}
+
+		// Cache a failure briefly so we don't hammer GitHub on every page load.
+		set_transient( self::TRANSIENT, '0', HOUR_IN_SECONDS );
+		return null;
 	}
 
 	/**
@@ -268,17 +301,25 @@ class Xen_AI_Updater {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( [ 'message' => 'Permission denied.' ] );
 		}
+
 		self::clear_cache();
+
+		// Force WordPress to re-run its plugin update check immediately.
+		if ( ! function_exists( 'wp_update_plugins' ) ) {
+			require_once ABSPATH . 'wp-includes/update.php';
+		}
+		wp_update_plugins();
+
 		$release = $this->get_latest_release();
 		if ( ! $release ) {
 			wp_send_json_error( [ 'message' => 'Could not reach GitHub. Check your server\'s outbound connections.' ] );
 		}
 		$version = ltrim( $release['tag_name'], 'vV. ' );
 		wp_send_json_success( [
-			'message'         => 'Latest release on GitHub: v' . $version . ' (installed: ' . XEN_AI_VERSION . ')',
-			'remote_version'  => $version,
-			'installed'       => XEN_AI_VERSION,
-			'update_available'=> version_compare( $version, XEN_AI_VERSION, '>' ),
+			'message'          => 'Latest release on GitHub: v' . $version . ' (installed: ' . XEN_AI_VERSION . ')',
+			'remote_version'   => $version,
+			'installed'        => XEN_AI_VERSION,
+			'update_available' => version_compare( $version, XEN_AI_VERSION, '>' ),
 		] );
 	}
 }
