@@ -1,0 +1,318 @@
+/* =========================================================
+   XEN A.I — Front-end Chat Widget Styles
+   ========================================================= */
+
+/* ── Root variables (overridden at runtime via JS) ─────── */
+#xen-ai-widget {
+  --xen-accent:       #4f46e5;
+  --xen-accent-dark:  #4338ca;
+  --xen-accent-rgb:   79, 70, 229;
+  --xen-user-bubble:  #4f46e5;
+  --xen-bot-bubble:   #f1f5f9;
+  --xen-bot-text:     #1e293b;
+  --xen-header-bg:    linear-gradient(135deg, #4f46e5, #7c3aed);
+  --xen-win-radius:   18px;
+  --xen-win-w:        360px;
+  --xen-win-h:        520px;
+
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483640;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1e293b;
+}
+
+/* ── Toggle button ──────────────────────────────────────── */
+.xen-ai-toggle {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--xen-accent);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 24px rgba(var(--xen-accent-rgb), .45);
+  transition: transform .2s ease, box-shadow .2s ease;
+  position: relative;
+  outline: none;
+  animation: xen-pulse-btn 3s ease-in-out infinite;
+}
+.xen-ai-toggle:hover { transform: scale(1.08); }
+.xen-ai-toggle:focus-visible {
+  outline: 3px solid rgba(var(--xen-accent-rgb), .4);
+  outline-offset: 3px;
+}
+.xen-ai-toggle svg { fill: #fff; display: block; }
+.xen-toggle-logo { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; display: block; }
+
+@keyframes xen-pulse-btn {
+  0%, 100% { box-shadow: 0 4px 24px rgba(var(--xen-accent-rgb), .45); }
+  50%       { box-shadow: 0 4px 32px rgba(var(--xen-accent-rgb), .65), 0 0 0 10px rgba(var(--xen-accent-rgb), .08); }
+}
+
+/* ── Notification bubble ────────────────────────────────── */
+.xen-ai-notification {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px 36px 10px 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  max-width: 240px;
+  white-space: normal;
+  display: none;
+  animation: xen-slide-up .3s ease;
+}
+.xen-ai-notification::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  right: 22px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  transform: rotate(45deg);
+  box-shadow: 2px 2px 4px rgba(0,0,0,.06);
+}
+.xen-ai-notification-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1;
+  padding: 2px;
+}
+.xen-ai-notification-close:hover { color: #64748b; }
+
+/* ── Chat window ────────────────────────────────────────── */
+.xen-ai-window {
+  position: absolute;
+  bottom: 72px;
+  right: 0;
+  width: var(--xen-win-w);
+  height: var(--xen-win-h);
+  background: #fff;
+  border-radius: var(--xen-win-radius);
+  box-shadow: 0 20px 60px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.08);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  transform-origin: bottom right;
+}
+.xen-ai-window.xen-open {
+  display: flex;
+  animation: xen-win-in .25s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+.xen-ai-window.xen-closing {
+  animation: xen-win-out .2s ease forwards;
+}
+
+@keyframes xen-win-in  { from { opacity:0; transform:scale(.85) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+@keyframes xen-win-out { from { opacity:1; transform:scale(1) translateY(0); }       to { opacity:0; transform:scale(.85) translateY(20px); } }
+@keyframes xen-slide-up { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* Window header */
+.xen-ai-win-header {
+  background: var(--xen-header-bg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.xen-ai-win-identity { display: flex; align-items: center; gap: 10px; }
+.xen-ai-win-avatar {
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.xen-ai-win-avatar.xen-avatar-img { background: transparent; }
+.xen-ai-win-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+.xen-ai-win-identity strong { display: block; color: #fff; font-size: 0.95rem; }
+.xen-ai-win-status { display: flex; align-items: center; gap: 5px; color: rgba(255,255,255,.8); font-size: 0.72rem; }
+.xen-ai-online-dot {
+  width: 7px;
+  height: 7px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: xen-blink 2s ease-in-out infinite;
+}
+@keyframes xen-blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.xen-ai-win-close {
+  background: rgba(255,255,255,.15);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+}
+.xen-ai-win-close:hover { background: rgba(255,255,255,.3); }
+
+/* Messages area */
+.xen-ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+.xen-ai-messages::-webkit-scrollbar       { width: 4px; }
+.xen-ai-messages::-webkit-scrollbar-track { background: transparent; }
+.xen-ai-messages::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+/* Message bubbles */
+.xen-ai-message {
+  display: flex;
+  gap: 8px;
+  max-width: 88%;
+  animation: xen-msg-in .2s ease;
+}
+@keyframes xen-msg-in { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.xen-ai-message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.xen-ai-message.assistant { align-self: flex-start; }
+
+.xen-ai-msg-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--xen-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+  overflow: hidden;
+}
+.xen-ai-msg-avatar.xen-avatar-img { background: transparent; }
+.xen-ai-msg-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+
+.xen-ai-msg-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.xen-ai-message.user      .xen-ai-msg-bubble { background: var(--xen-user-bubble); color: #fff; border-bottom-right-radius: 4px; }
+.xen-ai-message.assistant .xen-ai-msg-bubble { background: var(--xen-bot-bubble);  color: var(--xen-bot-text); border-bottom-left-radius: 4px; }
+
+/* Typing indicator */
+.xen-ai-typing {
+  display: none;
+  padding: 0 16px 12px;
+  flex-shrink: 0;
+}
+.xen-ai-typing-inner {
+  background: var(--xen-bot-bubble);
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+}
+.xen-ai-typing-inner span {
+  width: 7px;
+  height: 7px;
+  background: #94a3b8;
+  border-radius: 50%;
+  animation: xen-dot-bounce 1.2s ease-in-out infinite;
+}
+.xen-ai-typing-inner span:nth-child(2) { animation-delay: .2s; }
+.xen-ai-typing-inner span:nth-child(3) { animation-delay: .4s; }
+@keyframes xen-dot-bounce { 0%,80%,100%{transform:scale(1)} 40%{transform:scale(1.4)} }
+
+/* Input row */
+.xen-ai-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+.xen-ai-user-input {
+  flex: 1;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-size: 0.875rem;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+  max-height: 100px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+.xen-ai-user-input:focus {
+  border-color: var(--xen-accent);
+  box-shadow: 0 0 0 3px rgba(var(--xen-accent-rgb), .1);
+}
+.xen-ai-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--xen-accent);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, transform .1s;
+}
+.xen-ai-send-btn:hover   { background: var(--xen-accent-dark); }
+.xen-ai-send-btn:active  { transform: scale(.92); }
+.xen-ai-send-btn:disabled { opacity: .5; cursor: not-allowed; }
+.xen-ai-send-btn svg { fill: #fff; }
+
+/* Window footer */
+.xen-ai-win-footer {
+  text-align: center;
+  padding: 6px;
+  font-size: 0.68rem;
+  color: #94a3b8;
+  border-top: 1px solid #f8fafc;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 420px) {
+  #xen-ai-widget { bottom: 12px; right: 12px; }
+  .xen-ai-window { width: calc(100vw - 24px); right: 0; }
+}

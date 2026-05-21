@@ -1,0 +1,29 @@
+# WordPress uploads (private AI files stored here at runtime)
+uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Composer
+vendor/
+composer.lock
+
+# Node
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build artifacts
+*.min.js.map
+*.min.css.map
+
+# Logs
+*.log
