@@ -252,6 +252,38 @@ $current_provider = xen_v( 'provider', 'openai' );
 					<p class="xen-ai-help">Milliseconds before the notification bubble appears (0 = immediately).</p>
 				</div>
 			</div>
+
+			<hr class="xen-ai-divider" style="margin:24px 0;">
+
+			<div class="xen-ai-field-row">
+				<label class="xen-ai-label" style="color:#dc2626;">🗑️ Data &amp; Uninstall</label>
+				<div class="xen-ai-field-body">
+					<label class="xen-ai-toggle-label">
+						<input type="checkbox"
+						       id="xen-clean-uninstall"
+						       name="clean_uninstall"
+						       value="1"
+						       <?php checked( xen_v( 'clean_uninstall', false ) ); ?>>
+						<span class="xen-ai-toggle-text">
+							Delete all XEN A.I data when the plugin is removed
+							<small class="xen-ai-help" style="display:block;margin-top:2px;">
+								Wipes DB tables, settings, license record, and uploaded files when you delete the plugin via WordPress → Plugins. Leave unchecked to preserve data for reinstalls.
+							</small>
+						</span>
+					</label>
+
+					<div style="margin-top:16px;">
+						<p class="xen-ai-help" style="margin-bottom:8px;">
+							<strong>Manual Wipe</strong> — Immediately deletes all conversations, leads, knowledge base entries, license data, and uploaded files. Settings are preserved. Tables are recreated empty.
+						</p>
+						<button type="button" id="xen-wipe-data-btn" class="xen-ai-btn xen-ai-btn-danger">
+							⚠️ Wipe All Data Now
+						</button>
+						<span id="xen-wipe-spinner" class="xen-spinner" style="display:none;margin-left:8px;"></span>
+						<div id="xen-wipe-notice" class="xen-ai-notice" style="display:none;margin-top:10px;"></div>
+					</div>
+				</div>
+			</div>
 		</div>
 
 		<div class="xen-ai-mt">
@@ -263,61 +295,8 @@ $current_provider = xen_v( 'provider', 'openai' );
 
 	</form>
 
-	<!-- ── Data & Uninstall ── -->
-	<div class="xen-ai-card xen-ai-mt xen-ai-danger-zone">
-		<h2 class="xen-ai-card-title">🗑️ Data &amp; Uninstall</h2>
-		<p style="color:var(--xen-muted);font-size:0.875rem;margin-bottom:20px;">
-			These actions are <strong>irreversible</strong>. Use with caution.
-		</p>
-
-		<div class="xen-ai-field-row">
-			<label class="xen-ai-label">On Plugin Delete</label>
-			<div class="xen-ai-field-body">
-				<label class="xen-ai-toggle-label">
-					<input type="checkbox"
-					       id="xen-clean-uninstall"
-					       name="clean_uninstall"
-					       value="1"
-					       <?php checked( xen_v( 'clean_uninstall', false ) ); ?>>
-					<span class="xen-ai-toggle-text">
-						Delete all XEN A.I data when the plugin is removed
-						<small class="xen-ai-help" style="display:block;margin-top:2px;">
-							Wipes DB tables, settings, license record, and uploaded files when you delete the plugin via WordPress → Plugins. Leave unchecked to keep data for reinstalls.
-						</small>
-					</span>
-				</label>
-			</div>
-		</div>
-
-		<hr class="xen-ai-divider" style="margin:24px 0;">
-
-		<div class="xen-ai-field-row">
-			<label class="xen-ai-label">Manual Wipe</label>
-			<div class="xen-ai-field-body">
-				<p class="xen-ai-help" style="margin-bottom:12px;">
-					Immediately deletes all conversations, leads, knowledge base entries, license data, and uploaded files.
-					Plugin settings are preserved. Tables are recreated empty.
-				</p>
-				<button type="button" id="xen-wipe-data-btn" class="xen-ai-btn xen-ai-btn-danger">
-					⚠️ Wipe All Data Now
-				</button>
-				<span id="xen-wipe-spinner" class="xen-spinner" style="display:none;margin-left:8px;"></span>
-			</div>
-		</div>
-	</div>
-
-	<div id="xen-wipe-notice" class="xen-ai-notice" style="display:none;margin-top:16px;"></div>
-
 	<script>
 	(function($){
-		/* ── Save clean_uninstall preference with settings form ── */
-		$('#xen-settings-form').on('submit', function(){
-			// Ensure checkbox value is included even when unchecked
-			if ( ! $('input[name="clean_uninstall"]').is(':checked') ) {
-				$(this).append('<input type="hidden" name="clean_uninstall" value="0">');
-			}
-		});
-
 		/* ── Manual wipe ── */
 		$('#xen-wipe-data-btn').on('click', function(){
 			if ( ! confirm('⚠️ This will permanently delete ALL conversations, knowledge base entries, leads, license data, and uploaded files.\n\nPlugin settings will be kept. This cannot be undone.\n\nAre you absolutely sure?') ) {
