@@ -40,6 +40,7 @@ $xen_ai_files = [
 	'includes/class-site-content.php',
 	'includes/class-license.php',
 	'includes/class-pro-features.php',
+	'includes/class-updater.php',
 	'includes/class-ai-handler.php',
 	'includes/class-file-processor.php',
 	'includes/class-chat-ajax.php',
@@ -62,4 +63,6 @@ add_action( 'plugins_loaded', function () {
 	Xen_AI_Core::get_instance()->init();
 	// Boot pro features only when license is valid
 	Xen_AI_Pro_Features::get_instance()->init();
+	// GitHub auto-updater
+	( new Xen_AI_Updater( XEN_AI_PLUGIN_FILE ) )->init();
 } );
