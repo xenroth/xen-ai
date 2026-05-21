@@ -1,6 +1,9 @@
 # WordPress uploads (private AI files stored here at runtime)
 uploads/
 
+# License server code — belongs in a separate private repo, never shipped with the plugin
+server/
+
 # OS
 .DS_Store
 Thumbs.db
