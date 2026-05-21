@@ -57,6 +57,9 @@ class Xen_AI_Updater {
 
 		// Rename the extracted GitHub source folder to match the plugin slug
 		add_filter( 'upgrader_source_selection', [ $this, 'fix_source_dir' ], 10, 4 );
+
+		// Force-check action (admin only)
+		add_action( 'wp_ajax_xen_ai_force_update_check', [ $this, 'ajax_force_check' ] );
 	}
 
 	// ── WordPress update hooks ────────────────────────────────────────────────
@@ -78,7 +81,7 @@ class Xen_AI_Updater {
 			return $transient;
 		}
 
-		$remote_version = ltrim( $release['tag_name'], 'vV' );
+		$remote_version = ltrim( $release['tag_name'], 'vV. ' );
 
 		if ( version_compare( $remote_version, XEN_AI_VERSION, '>' ) ) {
 			$transient->response[ $this->plugin_basename ] = (object) [
@@ -128,7 +131,7 @@ class Xen_AI_Updater {
 			return $result;
 		}
 
-		$remote_version = ltrim( $release['tag_name'], 'vV' );
+		$remote_version = ltrim( $release['tag_name'], 'vV. ' );
 
 		return (object) [
 			'name'          => 'XEN A.I',
@@ -256,5 +259,26 @@ class Xen_AI_Updater {
 	 */
 	public static function clear_cache() {
 		delete_transient( self::TRANSIENT );
+		delete_site_transient( 'update_plugins' );
+	}
+
+	/** AJAX handler — admin only force-check. */
+	public function ajax_force_check() {
+		check_ajax_referer( 'xen_ai_admin', 'nonce' );
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [ 'message' => 'Permission denied.' ] );
+		}
+		self::clear_cache();
+		$release = $this->get_latest_release();
+		if ( ! $release ) {
+			wp_send_json_error( [ 'message' => 'Could not reach GitHub. Check your server\'s outbound connections.' ] );
+		}
+		$version = ltrim( $release['tag_name'], 'vV. ' );
+		wp_send_json_success( [
+			'message'         => 'Latest release on GitHub: v' . $version . ' (installed: ' . XEN_AI_VERSION . ')',
+			'remote_version'  => $version,
+			'installed'       => XEN_AI_VERSION,
+			'update_available'=> version_compare( $version, XEN_AI_VERSION, '>' ),
+		] );
 	}
 }

@@ -210,9 +210,45 @@ $configured    = $ai->is_configured();
 			</tr>
 			<tr>
 				<td><span class="xen-ai-dot green"></span> Plugin Version</td>
-				<td><strong><?php echo esc_html( XEN_AI_VERSION ); ?></strong></td>
+				<td>
+					<strong><?php echo esc_html( XEN_AI_VERSION ); ?></strong>
+					&nbsp;
+					<button type="button" id="xen-force-update-check" class="button button-small" style="vertical-align:middle;">
+						🔄 Check for Update
+					</button>
+					<span id="xen-update-check-result" style="margin-left:8px;font-size:0.85rem;"></span>
+				</td>
 			</tr>
 		</table>
 	</div>
 
 </div>
+
+<script>
+(function($){
+	$('#xen-force-update-check').on('click', function(){
+		var $btn = $(this);
+		var $res = $('#xen-update-check-result');
+		$btn.prop('disabled', true).text('Checking…');
+		$res.text('');
+		$.post(
+			<?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>,
+			{ action: 'xen_ai_force_update_check', nonce: <?php echo wp_json_encode( wp_create_nonce( 'xen_ai_admin' ) ); ?> }
+		)
+		.done(function(res){
+			if (res.success) {
+				var d = res.data;
+				if (d.update_available) {
+					$res.html('<span style="color:#16a34a;font-weight:600;">✅ Update available: v' + d.remote_version + '</span> — <a href="' + <?php echo wp_json_encode( admin_url( 'update-core.php' ) ); ?> + '">Go to Updates</a>');
+				} else {
+					$res.html('<span style="color:#6b7280;">✔ You are on the latest version (v' + d.remote_version + ')</span>');
+				}
+			} else {
+				$res.html('<span style="color:#dc2626;">⚠ ' + (res.data && res.data.message ? res.data.message : 'Check failed') + '</span>');
+			}
+		})
+		.fail(function(){ $res.html('<span style="color:#dc2626;">⚠ Request failed.</span>'); })
+		.always(function(){ $btn.prop('disabled', false).text('🔄 Check for Update'); });
+	});
+}(jQuery));
+</script>
