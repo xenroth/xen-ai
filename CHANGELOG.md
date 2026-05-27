@@ -4,6 +4,14 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.3] — 2026-05-27
+
+### Bug Fixes
+
+- **License activation/deactivation AJAX handlers missing** — `ajax_activate_license()` and `ajax_deactivate_license()` methods were registered as AJAX actions but never defined in `Xen_AI_Admin`, causing a PHP fatal error and "Request failed. Check your connection" on every attempt
+
+---
+
 ## [1.1.2] — 2026-05-27
 
 ### Bug Fixes

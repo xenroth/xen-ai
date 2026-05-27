@@ -367,6 +367,31 @@ class Xen_AI_Admin {
 		wp_send_json_success( [ 'url' => $url ] );
 	}
 
+	public function ajax_activate_license() {
+		$this->verify_admin_nonce();
+
+		$key    = sanitize_text_field( trim( $_POST['key'] ?? '' ) );
+		$result = Xen_AI_License::activate( $key );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( [ 'message' => $result->get_error_message() ] );
+		}
+
+		wp_send_json_success( [ 'message' => __( 'License activated successfully!', 'xen-ai' ) ] );
+	}
+
+	public function ajax_deactivate_license() {
+		$this->verify_admin_nonce();
+
+		$result = Xen_AI_License::deactivate();
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( [ 'message' => $result->get_error_message() ] );
+		}
+
+		wp_send_json_success( [ 'message' => __( 'License deactivated.', 'xen-ai' ) ] );
+	}
+
 	public function ajax_wipe_data() {
 		$this->verify_admin_nonce();
 
