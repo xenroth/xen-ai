@@ -4,6 +4,14 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.0] — 2026-05-27
+
+### Changes
+
+- **GitHub repository owner updated** — plugin URI, auto-updater (`GH_USER`), and README all updated from `sepiroth-x` to `xenroth`. Existing installs are unaffected (GitHub redirects old URLs), but this version makes the new username canonical and verifies the auto-update pipeline works end-to-end.
+
+---
+
 ## [1.1.9] — 2026-05-27
 
 ### Added (Pro)
