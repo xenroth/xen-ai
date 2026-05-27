@@ -46,7 +46,7 @@ Interested? Contact **[me@xenroth.com](mailto:me@xenroth.com)** or **[+63 915 03
 
 1. Download or clone this repository into your `wp-content/plugins/` directory:
    ```bash
-   git clone https://github.com/xenroth/xen-ai.git
+   git clone https://github.com/xenroth/xen-ai.git ai_assistant
    ```
 2. Activate the plugin in **WordPress Admin → Plugins**.
 3. Go to **XEN A.I → Settings**:
