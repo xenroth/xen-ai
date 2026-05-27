@@ -4,6 +4,25 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.8] — 2026-05-27
+
+### Added
+
+- **Email field on license activation form** — users can now enter an optional contact email address alongside their license key when activating Pro. The email is:
+  - Collected via a new `your@email.com` input field next to the license key field in **XEN A.I → Pro License**
+  - Sent to the license server in the activation POST body (`email` field)
+  - Stored in the local encrypted license record in `wp_options`
+  - Shown in the license status strip on the Pro License page and in the Pro hero banner on the Dashboard
+
+### Server update required
+- **`license_activations` table** — run this once on the server DB:
+  ```sql
+  ALTER TABLE license_activations ADD COLUMN email varchar(150) DEFAULT NULL AFTER domain;
+  ```
+- **`license-api.php`** — update `handle_verify()` to read `$body['email']` and include it in the `INSERT INTO license_activations` call.
+
+---
+
 ## [1.1.7] — 2026-05-27
 
 ### Bug Fixes

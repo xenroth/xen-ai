@@ -64,6 +64,10 @@ $license_record = Xen_AI_License::get_record();
 			<span>🌐 Domain: <strong><?php echo esc_html( $license_record['domain'] ?? get_site_url() ); ?></strong></span>
 			<span class="xen-ai-pro-hero-sep">·</span>
 			<span>📅 Activated: <strong><?php echo esc_html( ! empty( $license_record['activated_at'] ) ? date_i18n( get_option( 'date_format' ), $license_record['activated_at'] ) : '—' ); ?></strong></span>
+			<?php if ( ! empty( $license_record['email'] ) ) : ?>
+			<span class="xen-ai-pro-hero-sep">·</span>
+			<span>✉️ Contact: <strong><?php echo esc_html( $license_record['email'] ); ?></strong></span>
+			<?php endif; ?>
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-pro-hero-manage">Manage License →</a>
 		</div>
 		<?php endif; ?>

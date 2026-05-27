@@ -371,7 +371,8 @@ class Xen_AI_Admin {
 		$this->verify_admin_nonce();
 
 		$key    = sanitize_text_field( trim( $_POST['key'] ?? '' ) );
-		$result = Xen_AI_License::activate( $key );
+		$email  = sanitize_email( trim( $_POST['email'] ?? '' ) );
+		$result = Xen_AI_License::activate( $key, $email );
 
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( [ 'message' => $result->get_error_message() ] );

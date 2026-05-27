@@ -125,10 +125,12 @@ class Xen_AI_License {
 	 * Contacts the remote server, validates the returned token, and persists it.
 	 *
 	 * @param  string $key
+	 * @param  string $email  Optional contact email stored with the activation record.
 	 * @return true|WP_Error
 	 */
-	public static function activate( $key ) {
+	public static function activate( $key, $email = '' ) {
 		$key    = sanitize_text_field( trim( $key ) );
+		$email  = sanitize_email( trim( $email ) );
 		$domain = self::site_domain();
 
 		if ( empty( $key ) ) {
@@ -141,6 +143,7 @@ class Xen_AI_License {
 			'body'    => wp_json_encode( [
 				'key'     => $key,
 				'domain'  => $domain,
+				'email'   => $email,
 				'product' => 'xen-ai-pro',
 				'action'  => 'verify',
 			] ),
@@ -170,6 +173,7 @@ class Xen_AI_License {
 			'key'          => $key,
 			'token'        => $body['token'],
 			'domain'       => $domain,
+			'email'        => $email,
 			'activated_at' => time(),
 		];
 		update_option( self::OPTION_KEY, self::encrypt( wp_json_encode( $record ) ), false );

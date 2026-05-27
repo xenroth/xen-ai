@@ -32,6 +32,9 @@ $masked  = Xen_AI_License::get_masked_key();
 					<?php if ( $active ) : ?>
 						Licensed to: <strong><?php echo esc_html( $record['domain'] ?? get_site_url() ); ?></strong>
 						&nbsp;·&nbsp; Activated: <strong><?php echo $record['activated_at'] ? date_i18n( get_option( 'date_format' ), $record['activated_at'] ) : '—'; ?></strong>
+						<?php if ( ! empty( $record['email'] ) ) : ?>
+						&nbsp;·&nbsp; Email: <strong><?php echo esc_html( $record['email'] ); ?></strong>
+						<?php endif; ?>
 					<?php else : ?>
 						Enter your license key below to unlock all Pro features.
 					<?php endif; ?>
@@ -54,7 +57,7 @@ $masked  = Xen_AI_License::get_masked_key();
 			One key activates one domain — purchasing supports continued development. ₱999 one-time.
 		</p>
 
-		<div class="xen-ai-license-input-row">
+		<div class="xen-ai-license-input-row" style="flex-wrap:wrap;gap:10px;">
 			<input type="text"
 			       id="xen-license-key-input"
 			       class="xen-ai-input-field"
@@ -62,7 +65,15 @@ $masked  = Xen_AI_License::get_masked_key();
 			       autocomplete="off"
 			       spellcheck="false"
 			       maxlength="64"
-			       style="font-family:monospace;letter-spacing:.05em;max-width:400px;">
+			       style="font-family:monospace;letter-spacing:.05em;max-width:360px;">
+			<input type="email"
+			       id="xen-license-email-input"
+			       class="xen-ai-input-field"
+			       placeholder="your@email.com (optional)"
+			       autocomplete="email"
+			       spellcheck="false"
+			       maxlength="150"
+			       style="max-width:260px;">
 			<button type="button" id="xen-activate-license" class="xen-ai-btn xen-ai-btn-primary">
 				🔓 Verify &amp; Activate
 			</button>
@@ -145,13 +156,14 @@ $masked  = Xen_AI_License::get_masked_key();
 	}
 
 	$('#xen-activate-license').on('click', function(){
-		var key = $.trim($('#xen-license-key-input').val());
+		var key   = $.trim($('#xen-license-key-input').val());
+		var email = $.trim($('#xen-license-email-input').val());
 		if (!key) { showNotice('Please enter your license key.', 'warn'); return; }
 
 		$(this).prop('disabled', true);
 		$('#xen-license-spinner').show();
 
-		$.post(ajaxUrl, { action: 'xen_ai_activate_license', nonce: nonce, key: key })
+		$.post(ajaxUrl, { action: 'xen_ai_activate_license', nonce: nonce, key: key, email: email })
 			.done(function(res){
 				if (res.success) {
 					showNotice(res.data.message || 'License activated!', 'ok');
