@@ -195,6 +195,7 @@ class Xen_AI_License {
 					'key'     => $record['key'],
 					'domain'  => self::site_domain(),
 					'product' => 'xen-ai',
+					'action'  => 'deactivate',
 				] ),
 			] );
 		}
@@ -248,7 +249,7 @@ class Xen_AI_License {
 		}
 
 		// Verify product
-		if ( empty( $payload['product'] ) || 'xen-ai' !== $payload['product'] ) {
+		if ( empty( $payload['product'] ) || 'xen-ai-pro' !== $payload['product'] ) {
 			return false;
 		}
 

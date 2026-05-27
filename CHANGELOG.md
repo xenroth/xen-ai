@@ -4,6 +4,15 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.2] — 2026-05-27
+
+### Bug Fixes
+
+- **License token product mismatch** — `validate_token()` now correctly checks for `'xen-ai-pro'` to match the product value the license server encodes in the signed token (was checking `'xen-ai'`, causing every activation to fail with "invalid token")
+- **Deactivate missing action field** — `deactivate()` now sends `'action' => 'deactivate'` in the request body so the server correctly routes the deactivation call instead of rejecting it as an invalid action
+
+---
+
 ## [1.1.1] — 2026-05-21
 
 ### Bug Fixes
