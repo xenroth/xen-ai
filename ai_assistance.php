@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: XEN A.I
- * Plugin URI:  https://github.com/sepiroth-x/xen-ai
+ * Plugin URI:  https://github.com/xenroth/xen-ai
  * Description: AI-powered chat assistant with website knowledge base, lead capture, and full admin management.
  * Version:     1.1.9
  * Requires at least: 5.8

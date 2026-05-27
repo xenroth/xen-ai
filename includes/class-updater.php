@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Xen_AI_Updater {
 
 	/** GitHub repository owner. */
-	const GH_USER = 'sepiroth-x';
+	const GH_USER = 'xenroth';
 
 	/** GitHub repository name. */
 	const GH_REPO = 'xen-ai';
