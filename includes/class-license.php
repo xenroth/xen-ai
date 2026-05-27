@@ -141,7 +141,7 @@ class Xen_AI_License {
 			'body'    => wp_json_encode( [
 				'key'     => $key,
 				'domain'  => $domain,
-				'product' => 'xen-ai',
+				'product' => 'xen-ai-pro',
 				'action'  => 'verify',
 			] ),
 		] );
@@ -266,23 +266,41 @@ class Xen_AI_License {
 	/**
 	 * Encrypt a string using AES-256-CBC with a site-unique key derived from
 	 * AUTH_KEY (WordPress secret). Falls back to base64 if openssl unavailable.
+	 *
+	 * Format: b64url(iv) ":" b64url(raw_ciphertext)
+	 * Colon is NOT in the b64url alphabet so it is safe to split on.
 	 */
 	private static function encrypt( $plaintext ) {
 		if ( ! function_exists( 'openssl_encrypt' ) ) {
 			return base64_encode( $plaintext ); // degraded but better than nothing
 		}
 		$iv  = openssl_random_pseudo_bytes( 16 );
-		$enc = openssl_encrypt( $plaintext, 'AES-256-CBC', self::derive_key(), 0, $iv );
-		return self::b64url_encode( $iv . '||' . $enc );
+		$enc = openssl_encrypt( $plaintext, 'AES-256-CBC', self::derive_key(), OPENSSL_RAW_DATA, $iv );
+		if ( false === $enc ) {
+			return base64_encode( $plaintext ); // fallback
+		}
+		return self::b64url_encode( $iv ) . ':' . self::b64url_encode( $enc );
 	}
 
 	/**
 	 * Decrypt a value previously encrypted with self::encrypt().
+	 * Supports both the new colon-separated format and the legacy '||' format.
 	 */
 	private static function decrypt( $ciphertext ) {
 		if ( ! function_exists( 'openssl_decrypt' ) ) {
 			return base64_decode( $ciphertext ); // degraded path
 		}
+		// New format: b64url(iv) ":" b64url(raw_enc)
+		if ( false !== strpos( $ciphertext, ':' ) ) {
+			$pos = strpos( $ciphertext, ':' );
+			$iv  = self::b64url_decode( substr( $ciphertext, 0, $pos ) );
+			$enc = self::b64url_decode( substr( $ciphertext, $pos + 1 ) );
+			if ( false === $iv || false === $enc ) {
+				return false;
+			}
+			return openssl_decrypt( $enc, 'AES-256-CBC', self::derive_key(), OPENSSL_RAW_DATA, $iv );
+		}
+		// Legacy format: b64url( binary_iv . "||" . base64_enc )
 		$decoded = self::b64url_decode( $ciphertext );
 		if ( false === $decoded ) {
 			return false;
@@ -304,11 +322,16 @@ class Xen_AI_License {
 
 	// ── Misc helpers ──────────────────────────────────────────────────────────
 
-	/** Normalised site domain (scheme-stripped, lowercased). */
+	/**
+	 * Normalised site domain (scheme-stripped, www-stripped, lowercased).
+	 * MUST match the server-side sanitize_domain() which also strips www.
+	 */
 	private static function site_domain() {
 		$url  = get_site_url();
 		$host = wp_parse_url( $url, PHP_URL_HOST );
-		return strtolower( $host ?: $url );
+		$host = strtolower( $host ?: $url );
+		// Strip www. prefix — server normalises the same way
+		return preg_replace( '/^www\./i', '', $host );
 	}
 
 	private static function b64url_encode( $data ) {

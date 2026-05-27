@@ -1,5 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <?php
+// Force re-validation every time this page is viewed — never serve a stale cache here
+delete_transient( 'xen_ai_license_valid' );
 $record  = Xen_AI_License::get_record();
 $active  = Xen_AI_License::is_active();
 $masked  = Xen_AI_License::get_masked_key();

@@ -4,6 +4,21 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.7] — 2026-05-27
+
+### Bug Fixes
+
+- **License always detected as Free despite server activation** — root cause was three compounding bugs in `class-license.php`:
+  1. **`site_domain()` did not strip `www.` prefix** — the license server normalises domains by removing `www.` before embedding the domain in the signed token (e.g. `example.com`), but the plugin was comparing against the raw WordPress host (`www.example.com`). The check always failed → `validate_token()` returned `false` → plugin treated every install as Free
+  2. **`encrypt()` used `||` as a binary separator inside a raw 16-byte IV** — the separator bytes `\x7c\x7c` could appear within the random binary IV, causing `decrypt()` to split at the wrong position and corrupt the stored record. Fixed by switching to `OPENSSL_RAW_DATA` and a colon `:` separator between two b64url-encoded values; legacy records are still readable via a fallback path
+  3. **`activate()` POST body sent `'product' => 'xen-ai'`** — corrected to `'xen-ai-pro'` to match the server and token payload
+- **License page forces fresh validation** — the Pro License admin page now clears the 24-hour transient cache on every visit so stale "Free" results don't persist after activation
+
+### Action required for existing installs
+After deploying this update, go to **XEN A.I → Pro License** and re-enter your license key. The previous activation attempt was rejected silently by the plugin (token domain mismatch), so no record was stored in WordPress — the server activation slot is still held and will be reused automatically on the same domain.
+
+---
+
 ## [1.1.6] — 2026-05-27
 
 ### New
