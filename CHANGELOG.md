@@ -4,6 +4,14 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.4] — 2026-05-27
+
+### New
+
+- **Free Pro License promo banner** — dashboard now shows a highlighted promotional banner for non-activated installs offering free Pro license keys to the first 10 users, with a LINE community QR code and join link (https://line.me/R/ti/g/DBGUQQdSg2). Banner auto-hides once a license is active.
+
+---
+
 ## [1.1.3] — 2026-05-27
 
 ### Bug Fixes

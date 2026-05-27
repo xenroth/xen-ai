@@ -34,6 +34,33 @@ $configured    = $ai->is_configured();
 	</div>
 	<?php endif; ?>
 
+	<!-- Free Pro License Promo -->
+	<?php if ( ! Xen_AI_License::is_active() ) : ?>
+	<div class="xen-ai-promo-banner">
+		<div class="xen-ai-promo-content">
+			<div class="xen-ai-promo-text">
+				<div class="xen-ai-promo-badge-label">🎉 LIMITED OFFER</div>
+				<h2 class="xen-ai-promo-title">First 10 Users Get a FREE Pro License!</h2>
+				<p class="xen-ai-promo-desc">Join our exclusive LINE community to claim your free XEN A.I Pro license key and get early access to updates, tips, and direct developer support.</p>
+				<a href="https://line.me/R/ti/g/DBGUQQdSg2" target="_blank" rel="noopener noreferrer" class="xen-ai-btn xen-ai-btn-line">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align:middle;margin-right:6px;"><path d="M12 .5C5.649.5.5 4.534.5 9.5c0 4.41 3.914 8.112 9.21 8.878.358.077.846.236.97.542.11.278.072.713.035 1.003l-.157.947c-.048.278-.222 1.086.952.592 1.174-.494 6.334-3.729 8.641-6.385C21.604 13.14 23.5 11.437 23.5 9.5 23.5 4.534 18.351.5 12 .5z"/></svg>
+					Join LINE Group
+				</a>
+				<p class="xen-ai-promo-note">Or scan the QR code with your LINE app →</p>
+			</div>
+			<div class="xen-ai-promo-qr">
+				<img
+					src="<?php echo esc_url( 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=6&data=' . rawurlencode( 'https://line.me/R/ti/g/DBGUQQdSg2' ) ); ?>"
+					alt="Scan to join LINE group"
+					width="160"
+					height="160"
+				/>
+				<span class="xen-ai-promo-qr-label">Scan with LINE</span>
+			</div>
+		</div>
+	</div>
+	<?php endif; ?>
+
 	<!-- Stats -->
 	<div class="xen-ai-stats-grid">
 

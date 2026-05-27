@@ -387,6 +387,91 @@
 .xen-ai-pro-contact a:hover { text-decoration: underline; }
 .xen-ai-pro-contact-sep { color: #c4b5fd; }
 
+/* ── Free Pro Promo Banner ────────────────────────────── */
+.xen-ai-promo-banner {
+  background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 40%, #06c755 100%);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-top: 20px;
+  box-shadow: 0 4px 24px rgba(6,199,85,.25);
+}
+.xen-ai-promo-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.xen-ai-promo-text { flex: 1; min-width: 220px; }
+.xen-ai-promo-badge-label {
+  display: inline-block;
+  background: rgba(255,255,255,.25);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.xen-ai-promo-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+.xen-ai-promo-desc {
+  color: rgba(255,255,255,.92);
+  font-size: 0.9rem;
+  margin: 0 0 18px;
+  line-height: 1.55;
+}
+.xen-ai-promo-note {
+  color: rgba(255,255,255,.75);
+  font-size: 0.8rem;
+  margin: 10px 0 0;
+}
+.xen-ai-btn-line {
+  background: #06c755;
+  color: #fff !important;
+  border: 2px solid rgba(255,255,255,.35);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 10px 22px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  transition: background .2s, transform .15s;
+}
+.xen-ai-btn-line:hover {
+  background: #05b34a;
+  transform: translateY(-1px);
+}
+.xen-ai-promo-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.xen-ai-promo-qr img {
+  border-radius: 10px;
+  background: #fff;
+  padding: 6px;
+  display: block;
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+}
+.xen-ai-promo-qr-label {
+  color: rgba(255,255,255,.85);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* ── Free Features grid ───────────────────────────────── */
 .xen-ai-free-features-grid {
   display: grid;
