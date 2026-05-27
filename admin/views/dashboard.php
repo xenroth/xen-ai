@@ -8,13 +8,15 @@ $total_msgs    = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}xen_
 $leads_count   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}xen_ai_conversations WHERE user_email IS NOT NULL AND user_email != ''" );
 $ai            = new Xen_AI_Handler();
 $configured    = $ai->is_configured();
+$is_pro        = Xen_AI_License::is_active();
+$license_record = Xen_AI_License::get_record();
 ?>
 <div class="wrap xen-ai-wrap">
 
 	<div class="xen-ai-page-header">
 		<div class="xen-ai-page-title">
 			<span class="xen-ai-logo-icon">⚡</span>
-			<h1>XEN A.I — Dashboard</h1>
+			<h1>XEN A.I — Dashboard<?php if ( $is_pro ) : ?> <span class="xen-ai-pro-title-badge">✦ PRO</span><?php endif; ?></h1>
 		</div>
 		<p class="xen-ai-subtitle">AI-powered chat assistant &amp; lead capture for your WordPress site.</p>
 	</div>
@@ -34,8 +36,41 @@ $configured    = $ai->is_configured();
 	</div>
 	<?php endif; ?>
 
-	<!-- Free Pro License Promo -->
-	<?php if ( ! Xen_AI_License::is_active() ) : ?>
+	<?php if ( $is_pro ) : ?>
+	<!-- ── Pro Activated Hero Banner ─────────────────────────── -->
+	<div class="xen-ai-pro-hero">
+		<div class="xen-ai-pro-hero-glow"></div>
+		<div class="xen-ai-pro-hero-inner">
+			<div class="xen-ai-pro-hero-left">
+				<div class="xen-ai-pro-hero-crown">✦</div>
+				<div>
+					<div class="xen-ai-pro-hero-sup">XEN A.I</div>
+					<h2 class="xen-ai-pro-hero-title">PRO VERSION ACTIVE</h2>
+					<p class="xen-ai-pro-hero-sub">You have unlocked all current and future Pro features. Every new capability released under the Pro tier is automatically included with your license — forever.</p>
+				</div>
+			</div>
+			<div class="xen-ai-pro-hero-perks">
+				<div class="xen-ai-pro-hero-perk">✅ Proactive Visitor Questioning</div>
+				<div class="xen-ai-pro-hero-perk">✅ Knowledge-Base Topic Insights</div>
+				<div class="xen-ai-pro-hero-perk">✅ Service &amp; Product Purchase Guide</div>
+				<div class="xen-ai-pro-hero-perk">✅ Priority Support</div>
+				<div class="xen-ai-pro-hero-perk xen-ai-pro-hero-perk-future">🔮 All Future Pro Features — Included</div>
+			</div>
+		</div>
+		<?php if ( $license_record ) : ?>
+		<div class="xen-ai-pro-hero-meta">
+			<span>🔑 License: <strong><?php echo esc_html( Xen_AI_License::get_masked_key() ); ?></strong></span>
+			<span class="xen-ai-pro-hero-sep">·</span>
+			<span>🌐 Domain: <strong><?php echo esc_html( $license_record['domain'] ?? get_site_url() ); ?></strong></span>
+			<span class="xen-ai-pro-hero-sep">·</span>
+			<span>📅 Activated: <strong><?php echo esc_html( ! empty( $license_record['activated_at'] ) ? date_i18n( get_option( 'date_format' ), $license_record['activated_at'] ) : '—' ); ?></strong></span>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-pro-hero-manage">Manage License →</a>
+		</div>
+		<?php endif; ?>
+	</div>
+
+	<?php else : ?>
+	<!-- ── Free Pro License Promo ─────────────────────────────── -->
 	<div class="xen-ai-promo-banner">
 		<div class="xen-ai-promo-content">
 			<div class="xen-ai-promo-text">
@@ -60,6 +95,22 @@ $configured    = $ai->is_configured();
 		</div>
 	</div>
 	<?php endif; ?>
+
+	<!-- ── LINE Community & Announcements (always visible) ───── -->
+	<div class="xen-ai-community-bar">
+		<div class="xen-ai-community-bar-inner">
+			<span class="xen-ai-community-bar-icon">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .5C5.649.5.5 4.534.5 9.5c0 4.41 3.914 8.112 9.21 8.878.358.077.846.236.97.542.11.278.072.713.035 1.003l-.157.947c-.048.278-.222 1.086.952.592 1.174-.494 6.334-3.729 8.641-6.385C21.604 13.14 23.5 11.437 23.5 9.5 23.5 4.534 18.351.5 12 .5z"/></svg>
+			</span>
+			<div class="xen-ai-community-bar-text">
+				<strong>Community &amp; Announcements</strong>
+				<span>Get plugin updates, tips, and announcements directly from the developer.</span>
+			</div>
+			<a href="https://line.me/R/ti/g/DBGUQQdSg2" target="_blank" rel="noopener noreferrer" class="xen-ai-btn xen-ai-btn-line xen-ai-btn-line-sm">
+				Join LINE Group →
+			</a>
+		</div>
+	</div>
 
 	<!-- Stats -->
 	<div class="xen-ai-stats-grid">
@@ -158,49 +209,68 @@ $configured    = $ai->is_configured();
 		</div>
 	</div>
 
-	<!-- Pro Features upsell -->
-	<div class="xen-ai-card xen-ai-mt xen-ai-pro-card">
+	<!-- Pro Features upsell / unlocked -->
+	<div class="xen-ai-card xen-ai-mt <?php echo $is_pro ? 'xen-ai-pro-card xen-ai-pro-card-active' : 'xen-ai-pro-card'; ?>">
 		<div class="xen-ai-pro-header">
 			<div>
+				<?php if ( $is_pro ) : ?>
+				<h2 class="xen-ai-card-title" style="margin:0;">✦ XEN A.I Pro — Your Unlocked Perks</h2>
+				<p style="margin:6px 0 0;color:#16a34a;font-size:0.875rem;font-weight:600;">All features below are active on your license, including every future Pro release.</p>
+				<?php else : ?>
 				<h2 class="xen-ai-card-title" style="margin:0;">✨ XEN A.I Pro</h2>
 				<p style="margin:6px 0 0;color:var(--xen-text-muted);font-size:0.875rem;">Supercharge your chat assistant with advanced engagement tools.</p>
+				<?php endif; ?>
 			</div>
+			<?php if ( $is_pro ) : ?>
+			<span class="xen-ai-pro-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);">✅ Pro Active</span>
+			<?php else : ?>
 			<span class="xen-ai-pro-badge">Coming Soon</span>
+			<?php endif; ?>
 		</div>
 
 		<div class="xen-ai-pro-features-grid">
 
-			<div class="xen-ai-pro-feature">
-				<span class="xen-ai-pro-feature-icon">🎯</span>
+			<div class="xen-ai-pro-feature <?php echo $is_pro ? 'xen-ai-pro-feature-unlocked' : ''; ?>">
+				<span class="xen-ai-pro-feature-icon"><?php echo $is_pro ? '✅' : '🎯'; ?></span>
 				<div>
 					<strong>Proactive Visitor Questioning</strong>
 					<p>The AI automatically initiates targeted questions to understand each visitor's needs before they even type — driving deeper engagement from the first second.</p>
 				</div>
 			</div>
 
-			<div class="xen-ai-pro-feature">
-				<span class="xen-ai-pro-feature-icon">📋</span>
+			<div class="xen-ai-pro-feature <?php echo $is_pro ? 'xen-ai-pro-feature-unlocked' : ''; ?>">
+				<span class="xen-ai-pro-feature-icon"><?php echo $is_pro ? '✅' : '📋'; ?></span>
 				<div>
 					<strong>Knowledge-Base Topic Insights</strong>
 					<p>Surfaces a real-time list of knowledge-base topics most relevant to what the visitor is browsing, so they always find the answers they need instantly.</p>
 				</div>
 			</div>
 
-			<div class="xen-ai-pro-feature">
-				<span class="xen-ai-pro-feature-icon">🛒</span>
+			<div class="xen-ai-pro-feature <?php echo $is_pro ? 'xen-ai-pro-feature-unlocked' : ''; ?>">
+				<span class="xen-ai-pro-feature-icon"><?php echo $is_pro ? '✅' : '🛒'; ?></span>
 				<div>
 					<strong>Service &amp; Product Purchase Guide</strong>
 					<p>Step-by-step conversational guidance that walks prospects through your offerings and seamlessly directs them to checkout or a sales contact.</p>
 				</div>
 			</div>
 
+			<?php if ( $is_pro ) : ?>
+			<div class="xen-ai-pro-feature xen-ai-pro-feature-future">
+				<span class="xen-ai-pro-feature-icon">🔮</span>
+				<div>
+					<strong>All Future Pro Features — Included</strong>
+					<p>Every new capability added to the Pro tier is automatically unlocked for your license at no extra cost. You are set for life.</p>
+				</div>
+			</div>
+			<?php endif; ?>
+
 		</div>
 
 		<div class="xen-ai-pro-cta">
-			<span class="xen-ai-pro-price">₱999 <small>one-time</small></span>
-			<?php if ( Xen_AI_License::is_active() ) : ?>
-				<span class="xen-ai-pro-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);font-size:0.85rem;padding:6px 14px;">✅ Pro Active</span>
+			<?php if ( $is_pro ) : ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-btn xen-ai-btn-secondary">🔑 Manage License</a>
 			<?php else : ?>
+				<span class="xen-ai-pro-price">₱999 <small>one-time</small></span>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-btn xen-ai-btn-pro" style="opacity:1;cursor:pointer;">🔑 Activate Pro License</a>
 			<?php endif; ?>
 		</div>

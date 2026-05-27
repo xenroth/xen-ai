@@ -4,6 +4,17 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.5] — 2026-05-27
+
+### New
+
+- **Pro Version hero banner** — when a license is active the dashboard now shows a full-width "PRO VERSION ACTIVE" banner listing all unlocked perks, license key (masked), bound domain, activation date, and a note that all future Pro features are included automatically
+- **Pro title badge** — the Dashboard `h1` title gains a gold "✦ PRO" pill when a license is active
+- **Pro card unlocked state** — the Pro features card transforms when active: features show green checkmarks, an extra "All Future Pro Features — Included" tile appears, and the card border turns green
+- **LINE Community & Announcements bar** — a permanent green strip always visible below the hero/promo area linking to the developer's LINE group for plugin updates and announcements (previously hidden behind the promo condition)
+
+---
+
 ## [1.1.4] — 2026-05-27
 
 ### New

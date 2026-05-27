@@ -387,6 +387,175 @@
 .xen-ai-pro-contact a:hover { text-decoration: underline; }
 .xen-ai-pro-contact-sep { color: #c4b5fd; }
 
+/* ── Pro Title Badge ──────────────────────────────────── */
+.xen-ai-pro-title-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  padding: 3px 9px;
+  border-radius: 20px;
+  vertical-align: middle;
+  margin-left: 8px;
+  text-transform: uppercase;
+  box-shadow: 0 1px 6px rgba(245,158,11,.4);
+}
+
+/* ── Pro Activated Hero Banner ────────────────────────── */
+.xen-ai-pro-hero {
+  position: relative;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4c1d95 100%);
+  border-radius: 14px;
+  padding: 28px 32px 0;
+  margin-top: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 28px rgba(99,102,241,.3);
+}
+.xen-ai-pro-hero-glow {
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(245,158,11,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.xen-ai-pro-hero-inner {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding-bottom: 24px;
+}
+.xen-ai-pro-hero-left {
+  display: flex;
+  gap: 18px;
+  flex: 1;
+  min-width: 220px;
+  align-items: flex-start;
+}
+.xen-ai-pro-hero-crown {
+  font-size: 2.4rem;
+  color: #f59e0b;
+  line-height: 1;
+  flex-shrink: 0;
+  text-shadow: 0 0 18px rgba(245,158,11,.6);
+}
+.xen-ai-pro-hero-sup {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #a78bfa;
+  margin-bottom: 4px;
+}
+.xen-ai-pro-hero-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 10px;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.xen-ai-pro-hero-sub {
+  color: rgba(255,255,255,.78);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 420px;
+}
+.xen-ai-pro-hero-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+.xen-ai-pro-hero-perk {
+  background: rgba(255,255,255,.1);
+  color: #d1fae5;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border-left: 3px solid #22c55e;
+}
+.xen-ai-pro-hero-perk-future {
+  border-left-color: #a78bfa;
+  color: #e9d5ff;
+  background: rgba(167,139,250,.12);
+}
+.xen-ai-pro-hero-meta {
+  border-top: 1px solid rgba(255,255,255,.12);
+  padding: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  align-items: center;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,.65);
+}
+.xen-ai-pro-hero-meta strong { color: rgba(255,255,255,.9); }
+.xen-ai-pro-hero-sep { color: rgba(255,255,255,.25); }
+.xen-ai-pro-hero-manage {
+  margin-left: auto;
+  color: #a78bfa;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.xen-ai-pro-hero-manage:hover { color: #c4b5fd; text-decoration: underline; }
+
+/* ── Pro Card — Active state ──────────────────────────── */
+.xen-ai-pro-card-active {
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 0 0 4px rgba(34,197,94,.08) !important;
+}
+.xen-ai-pro-feature-unlocked {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+}
+.xen-ai-pro-feature-unlocked strong { color: #15803d; }
+.xen-ai-pro-feature-future {
+  background: #faf5ff !important;
+  border: 1px dashed #a78bfa !important;
+}
+.xen-ai-pro-feature-future strong { color: #7c3aed; }
+
+/* ── Community & Announcements bar ───────────────────── */
+.xen-ai-community-bar {
+  background: #06c755;
+  border-radius: 10px;
+  margin-top: 16px;
+}
+.xen-ai-community-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  flex-wrap: wrap;
+}
+.xen-ai-community-bar-icon {
+  color: #fff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.xen-ai-community-bar-text {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.xen-ai-community-bar-text strong { color: #fff; font-size: 0.9rem; }
+.xen-ai-community-bar-text span   { color: rgba(255,255,255,.85); font-size: 0.8rem; }
+.xen-ai-btn-line-sm {
+  padding: 7px 16px !important;
+  font-size: 0.82rem !important;
+  white-space: nowrap;
+}
+
 /* ── Free Pro Promo Banner ────────────────────────────── */
 .xen-ai-promo-banner {
   background: linear-gradient(135deg, #06b6d4 0%, #0ea5e9 40%, #06c755 100%);
