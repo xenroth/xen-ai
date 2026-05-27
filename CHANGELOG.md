@@ -4,6 +4,18 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.1] — 2026-05-27
+
+### Improved
+
+- **Leads deduplication** — the Leads page now groups conversations by visitor name + IP and surfaces one representative row per unique person (prefers the row that captured an email), eliminating repeated entries for multi-session visitors.
+- **Leads search / filter** — a search bar at the top of the Leads table filters results by name, email, or IP address in real time (form-based GET request, no JS dependency).
+- **Sortable columns** — Name, Email, IP, Message count, and Date columns are all clickable to sort ascending or descending; active column is highlighted.
+- **Geo-IP country detection** — the IP Address column now resolves each unique IP to a country flag + name via `ip-api.com` (client-side, batched, staggered to stay within the free 45 req/min rate limit).
+- **CSV export improvements** — Export CSV now applies the same deduplication logic and search filter as the on-screen table, and includes a new **Country** column resolved server-side via `ip-api.com`. Private/reserved IP ranges are labelled `Local/Private` without an external call.
+
+---
+
 ## [1.2.0] — 2026-05-27
 
 ### Changes

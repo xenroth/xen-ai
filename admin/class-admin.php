@@ -300,14 +300,66 @@ class Xen_AI_Admin {
 		$this->verify_admin_nonce();
 
 		global $wpdb;
-		$table = $wpdb->prefix . 'xen_ai_conversations';
-		$rows  = $wpdb->get_results(
-			"SELECT user_name, user_email, visitor_ip, page_url, created_at
-			 FROM {$table}
-			 WHERE user_email IS NOT NULL AND user_email != ''
-			    OR user_name  IS NOT NULL AND user_name  != ''
-			 ORDER BY created_at DESC"
+		$conv_table = $wpdb->prefix . 'xen_ai_conversations';
+		$msg_table  = $wpdb->prefix . 'xen_ai_messages';
+
+		$search      = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$search_where = '';
+		$search_args  = [];
+		if ( $search !== '' ) {
+			$like = '%' . $wpdb->esc_like( $search ) . '%';
+			$search_where = ' AND ( c.user_name LIKE %s OR c.user_email LIKE %s OR c.visitor_ip LIKE %s )';
+			$search_args  = [ $like, $like, $like ];
+		}
+
+		$base_where = "( user_name IS NOT NULL AND user_name != '' )
+		            OR ( user_email IS NOT NULL AND user_email != '' )";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$dedup_sub = "
+			SELECT COALESCE(
+				MIN( CASE WHEN user_email IS NOT NULL AND user_email != '' THEN id END ),
+				MIN( id )
+			) AS rep_id
+			FROM {$conv_table}
+			WHERE {$base_where}
+			GROUP BY LOWER( COALESCE( user_name, '' ) ), COALESCE( visitor_ip, '' )
+		";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$query = $wpdb->prepare(
+			"SELECT c.user_name, c.user_email, c.visitor_ip, c.page_url, c.created_at,
+			        (SELECT COUNT(*) FROM {$msg_table} m WHERE m.conversation_id = c.id) AS msg_count
+			 FROM {$conv_table} c
+			 INNER JOIN ( {$dedup_sub} ) AS dedup ON dedup.rep_id = c.id
+			 WHERE 1=1 {$search_where}
+			 ORDER BY c.created_at DESC",
+			$search_args
 		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $wpdb->get_results( $query );
+
+		// Resolve countries server-side for unique IPs (batch, fire-and-forget timing is fine for export)
+		$country_map = [];
+		$unique_ips  = array_unique( array_filter( array_column( (array) $rows, 'visitor_ip' ) ) );
+		foreach ( $unique_ips as $ip ) {
+			// Skip private/reserved ranges — no point querying
+			if ( $this->is_private_ip( $ip ) ) {
+				$country_map[ $ip ] = 'Local/Private';
+				continue;
+			}
+			$response = wp_remote_get(
+				'https://ip-api.com/json/' . rawurlencode( $ip ) . '?fields=country,status',
+				[ 'timeout' => 4 ]
+			);
+			if ( ! is_wp_error( $response ) ) {
+				$data = json_decode( wp_remote_retrieve_body( $response ), true );
+				$country_map[ $ip ] = ( ! empty( $data['status'] ) && 'success' === $data['status'] && ! empty( $data['country'] ) )
+					? $data['country'] : 'Unknown';
+			} else {
+				$country_map[ $ip ] = '';
+			}
+		}
 
 		header( 'Content-Type: text/csv; charset=utf-8' );
 		header( 'Content-Disposition: attachment; filename="xen-ai-leads-' . gmdate( 'Y-m-d' ) . '.csv"' );
@@ -315,13 +367,17 @@ class Xen_AI_Admin {
 		header( 'Expires: 0' );
 
 		$out = fopen( 'php://output', 'w' );
-		fputcsv( $out, [ 'Name', 'Email', 'IP Address', 'Page URL', 'Date' ] );
+		fputcsv( $out, [ 'Name', 'Email', 'IP Address', 'Country', 'Messages', 'Page URL', 'Date' ] );
 
 		foreach ( $rows as $r ) {
+			$ip      = $r->visitor_ip ?? '';
+			$country = isset( $country_map[ $ip ] ) ? $country_map[ $ip ] : '';
 			fputcsv( $out, [
 				$r->user_name  ?? '',
 				$r->user_email ?? '',
-				$r->visitor_ip ?? '',
+				$ip,
+				$country,
+				$r->msg_count  ?? '',
 				$r->page_url   ?? '',
 				$r->created_at,
 			] );
@@ -329,6 +385,13 @@ class Xen_AI_Admin {
 
 		fclose( $out );
 		exit;
+	}
+
+	/** Check whether an IP is in a private/reserved range (no geo-IP lookup needed). */
+	private function is_private_ip( string $ip ): bool {
+		return filter_var( $ip, FILTER_VALIDATE_IP,
+			FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+		) === false;
 	}
 
 	// ── Utility ───────────────────────────────────────────────────────────────

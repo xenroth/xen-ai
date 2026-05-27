@@ -803,3 +803,21 @@
 .xen-modal-msg-role   { font-size: 0.72rem; font-weight: 600; color: var(--xen-muted); min-width: 80px; padding-top: 3px; text-transform: uppercase; }
 .xen-modal-msg-bubble { background: var(--xen-bg-page); border-radius: 8px; padding: 8px 12px; font-size: 0.88rem; flex: 1; line-height: 1.5; }
 .xen-modal-msg.assistant .xen-modal-msg-bubble { background: #eef2ff; }
+
+/* ── Leads page toolbar ──────────────────────────────────── */
+.xen-leads-toolbar        { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.xen-leads-search-form    { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.xen-leads-search-input   { border: 1px solid var(--xen-border); border-radius: 8px; padding: 7px 12px; font-size: .875rem; min-width: 220px; outline: none; transition: border-color .15s; }
+.xen-leads-search-input:focus { border-color: var(--xen-primary); box-shadow: 0 0 0 2px rgba(79,70,229,.15); }
+.xen-leads-toolbar-right  { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.xen-leads-table-wrap     { overflow-x: auto; }
+
+/* ── Sortable column links ───────────────────────────────── */
+.xen-ai-sort-link         { color: inherit; text-decoration: none; white-space: nowrap; }
+.xen-ai-sort-link:hover   { color: var(--xen-primary); }
+.xen-ai-sort-link.active  { color: var(--xen-primary); font-weight: 600; }
+.xen-sort-arrow           { margin-left: 3px; font-size: .8em; opacity: .7; }
+
+/* ── Geo-IP badge ───────────────────────────────────────── */
+.xen-geo-badge            { font-size: .75rem; color: var(--xen-muted); margin-left: 5px; white-space: nowrap; display: inline-block; }
+.xen-geo-badge.loaded     { color: var(--xen-text); }
