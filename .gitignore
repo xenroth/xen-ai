@@ -3,6 +3,7 @@ uploads/
 
 # License server code — belongs in a separate private repo, never shipped with the plugin
 server/
+license-api.php
 
 # OS
 .DS_Store
