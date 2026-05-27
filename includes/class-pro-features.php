@@ -52,8 +52,11 @@ class Xen_AI_Pro_Features {
 		// Filter: modify the initial greeting message (proactive questioning)
 		add_filter( 'xen_ai_greeting_message', [ $this, 'filter_greeting_message' ], 10, 1 );
 
-		// Action: inject pro data into the xen_ai_init_session response
+		// Filter: inject pro data into the xen_ai_init_session response
 		add_filter( 'xen_ai_session_response', [ $this, 'filter_session_response' ], 10, 1 );
+
+		// Filter: append related KB topics to each chat reply (used by KB panel)
+		add_filter( 'xen_ai_chat_reply_data', [ $this, 'filter_chat_reply_data' ], 10, 2 );
 	}
 
 	// ── Pro Feature 1: Proactive Visitor Questioning ──────────────────────────
@@ -200,5 +203,56 @@ class Xen_AI_Pro_Features {
 		}
 
 		return $prompt;
+	}
+
+	// ── Pro Feature: Related Topics per Message ───────────────────────────────
+
+	/**
+	 * After each AI reply, search the KB for topics relevant to the user's message
+	 * and append them to the response so the frontend KB panel can update.
+	 *
+	 * @param  array  $data    Response data array (contains 'reply').
+	 * @param  string $message The user's message text.
+	 * @return array
+	 */
+	public function filter_chat_reply_data( $data, $message ) {
+		if ( ! Xen_AI_License::is_active() ) {
+			return $data;
+		}
+
+		global $wpdb;
+		$table = $wpdb->prefix . 'xen_ai_knowledge';
+
+		// Extract significant words (3+ chars, deduplicated)
+		$words = array_unique(
+			array_filter(
+				array_map( 'strtolower', preg_split( '/\s+/u', $message ) ),
+				function ( $w ) { return mb_strlen( $w ) >= 3; }
+			)
+		);
+
+		if ( empty( $words ) ) {
+			return $data;
+		}
+
+		// Build per-word LIKE conditions using wpdb::prepare for safe escaping
+		$conditions = [];
+		foreach ( $words as $word ) {
+			$like         = '%' . $wpdb->esc_like( $word ) . '%';
+			$conditions[] = $wpdb->prepare( '(title LIKE %s OR content LIKE %s)', $like, $like );
+		}
+
+		$where = implode( ' OR ', $conditions );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$topics = $wpdb->get_col(
+			"SELECT title FROM {$table} WHERE status = 'active' AND ({$where}) ORDER BY id DESC LIMIT 5"
+		);
+
+		if ( ! empty( $topics ) ) {
+			$data['related_topics'] = array_values( $topics );
+		}
+
+		return $data;
 	}
 }

@@ -12,6 +12,8 @@
     cooldownTimer  : null,
     turnstileToken : '',   // populated by CF Turnstile callback
     turnstileWidget: null, // Turnstile widget ID for reset
+    kbTopicsAll    : [],   // Pro: all KB topics from session init
+    kbPanelOpen    : false,// Pro: KB panel visibility state
 
     /* ── Init ──────────────────────────────────────────── */
     init: function () {
@@ -75,8 +77,11 @@
           if (res.data.pro_greeting) {
             XenChat.appendMessage('assistant', res.data.pro_greeting);
           }
-          // Pro feature: topic quick-menu chips
+          // Pro feature: KB topic panel + quick-menu chips
           if (res.data.pro_topics && res.data.pro_topics.length) {
+            XenChat.kbTopicsAll = res.data.pro_topics;
+            XenChat.populateKbPanel(res.data.pro_topics, false);
+            $('#xen-ai-kb-toggle').css('display', 'flex');
             XenChat.renderTopicChips(res.data.pro_topics);
           }
         }
@@ -107,6 +112,57 @@
       $bar.slideDown(220);
     },
 
+    /* ── Pro: KB topic panel ─────────────────────────────── */
+    toggleKbPanel: function () {
+      this.kbPanelOpen ? this.closeKbPanel() : this.openKbPanel();
+    },
+
+    openKbPanel: function () {
+      this.kbPanelOpen = true;
+      $('#xen-ai-kb-panel').attr('aria-hidden', 'false').slideDown(200);
+      $('#xen-ai-kb-toggle')
+        .addClass('xen-ai-kb-toggle-active')
+        .attr('aria-expanded', 'true');
+    },
+
+    closeKbPanel: function () {
+      this.kbPanelOpen = false;
+      $('#xen-ai-kb-panel').attr('aria-hidden', 'true').slideUp(180);
+      $('#xen-ai-kb-toggle')
+        .removeClass('xen-ai-kb-toggle-active')
+        .attr('aria-expanded', 'false');
+    },
+
+    /**
+     * Populate the KB panel list.
+     * @param {string[]} topics    Array of topic title strings.
+     * @param {boolean}  isRelated True when showing query-matched results.
+     */
+    populateKbPanel: function (topics, isRelated) {
+      var $list     = $('#xen-ai-kb-list');
+      var $subtitle = $('#xen-ai-kb-panel-subtitle');
+      if (!$list.length) return;
+
+      $list.empty();
+      $subtitle.text(isRelated ? 'Related to your message' : 'All knowledge base topics');
+
+      if (!topics || !topics.length) {
+        $list.append('<p class="xen-ai-kb-empty">No topics found.</p>');
+        return;
+      }
+
+      $.each(topics, function (i, topic) {
+        var $item = $('<button type="button" class="xen-ai-kb-item"></button>').text(topic);
+        $item.on('click', function () {
+          if (XenChat.sending || XenChat.cooldownTimer) return;
+          $('#xen-ai-input').val(topic);
+          XenChat.closeKbPanel();
+          XenChat.sendMessage();
+        });
+        $list.append($item);
+      });
+    },
+
     /* ── Event bindings ─────────────────────────────────── */
     bindEvents: function () {
       $('#xen-ai-toggle').on('click',      function () { XenChat.toggle(); });
@@ -115,6 +171,9 @@
         e.stopPropagation();
         XenChat.hideNotification();
       });
+
+      // Pro: KB topic panel toggle
+      $('#xen-ai-kb-toggle').on('click', function () { XenChat.toggleKbPanel(); });
 
       // Clicking the notification bubble opens the chat
       $('#xen-ai-notification').on('click', function () { XenChat.open(); });
@@ -330,6 +389,21 @@
         self.hideTyping();
         if (res.success) {
           self.appendMessage('assistant', res.data.reply);
+
+          // Pro: update KB panel with topics related to this specific message
+          if (res.data.related_topics && res.data.related_topics.length) {
+            self.populateKbPanel(res.data.related_topics, true);
+            if (!self.kbPanelOpen) {
+              // Pulse the KB button to hint there are relevant topics
+              $('#xen-ai-kb-toggle').addClass('xen-ai-kb-toggle-pulse');
+              setTimeout(function () {
+                $('#xen-ai-kb-toggle').removeClass('xen-ai-kb-toggle-pulse');
+              }, 900);
+            }
+          } else if (res.data.related_topics !== undefined && self.kbTopicsAll.length) {
+            // No matches for this query — reset panel to all topics
+            self.populateKbPanel(self.kbTopicsAll, false);
+          }
 
           // Reset Turnstile token after a successful call so the next
           // message gets a fresh token (invisible widgets re-execute automatically).

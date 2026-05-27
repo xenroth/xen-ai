@@ -4,6 +4,23 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.9] — 2026-05-27
+
+### Added (Pro)
+
+- **Toggleable KB topic panel in chat widget** — a 📚 book icon button appears in the chat header when Pro is active. Clicking it slides open a compact panel listing all active knowledge-base topics. Clicking any topic pre-fills the input and sends the message instantly, then closes the panel.
+- **Query-aware related topics** — after every AI reply, the backend searches the knowledge base for entries whose `title` or `content` matches words in the user's message and returns up to 5 `related_topics`. The KB panel updates in real time to show only those relevant topics (subtitle changes to "Related to your message"). If no KB entries match the query the panel resets to the full topic list. When the panel is closed, the KB toggle button briefly pulses to signal new related topics are available.
+
+### Technical changes
+
+- `includes/class-chat-ajax.php` — final AJAX reply now passes through a new `xen_ai_chat_reply_data` filter so Pro (or third-party) hooks can append extra fields without touching the core handler
+- `includes/class-pro-features.php` — new `filter_chat_reply_data()` method hooked on `xen_ai_chat_reply_data`: splits user message into 3+ char words, runs safe `LIKE` queries against `xen_ai_knowledge.title` and `.content`, returns top 5 matched titles as `related_topics`
+- `admin/views/chat-widget.php` — KB toggle `<button>` added to header actions; `#xen-ai-kb-panel` region added below header
+- `assets/js/chat.js` — new `kbTopicsAll`, `kbPanelOpen` state; `populateKbPanel()`, `toggleKbPanel()`, `openKbPanel()`, `closeKbPanel()` methods; `startSession()` and `sendMessage()` updated; KB toggle shown via `display:flex` when Pro topics present
+- `assets/css/chat.css` — `.xen-ai-win-header-actions` wrapper; `.xen-ai-kb-toggle` button; `.xen-ai-kb-panel`, `.xen-ai-kb-panel-header`, `.xen-ai-kb-list`, `.xen-ai-kb-item`, `.xen-ai-kb-empty` panel styles; `xen-kb-pulse` animation
+
+---
+
 ## [1.1.8] — 2026-05-27
 
 ### Added

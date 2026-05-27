@@ -219,7 +219,9 @@ class Xen_AI_Chat_Ajax {
 
 		$this->release_session_lock( $session_id );
 
-		wp_send_json_success( [ 'reply' => $reply ] );
+		// Allow Pro features to append extra fields (e.g. related_topics) to the response.
+		$response_data = apply_filters( 'xen_ai_chat_reply_data', [ 'reply' => $reply ], $message );
+		wp_send_json_success( $response_data );
 	}
 
 	// ── Helpers ───────────────────────────────────────────────────────────────
