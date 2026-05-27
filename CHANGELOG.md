@@ -4,6 +4,20 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.1.6] — 2026-05-27
+
+### New
+
+- **Pro topic quick-menu chips** — when Pro is active and KB entries exist, clickable topic chips appear above the chat input; clicking one pre-fills and sends the message instantly, hiding the chip bar. Powered by new `pro_topics` field in the session-init response
+- **Getting Started guide on dashboard** — collapsible step-by-step onboarding card shows how to connect an AI provider, set bot identity, build the knowledge base, write a system prompt, test the widget, and optionally activate Pro. Steps auto-mark as done based on live status (e.g. API configured, KB has entries, Pro active)
+
+### Changes
+
+- **Pro sell card hidden when active** — the "XEN A.I Pro" upsell section is no longer shown once a license is active (the Pro hero banner already covers this); the fourth Pro feature (Topic Quick-Menu) is now listed in the upsell card for free users
+- **Q1 confirmed (internal)** — all 3 previously listed Pro features (Proactive Visitor Questioning, KB Topic Insights, Purchase Guide) were already fully implemented and activate automatically via WordPress filters when a valid license is detected
+
+---
+
 ## [1.1.5] — 2026-05-27
 
 ### New

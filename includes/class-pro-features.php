@@ -104,6 +104,19 @@ class Xen_AI_Pro_Features {
 			$response['pro_greeting'] = "Hi! 👋 What brings you here today? I'd love to help — what are you looking for?";
 		}
 
+		// Pro Feature 4: Topic quick-menu chips — send KB topic titles to the frontend
+		global $wpdb;
+		$table  = $wpdb->prefix . 'xen_ai_knowledge';
+		$topics = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT title FROM {$table} WHERE status = 'active' ORDER BY id DESC LIMIT %d",
+				6
+			)
+		);
+		if ( ! empty( $topics ) ) {
+			$response['pro_topics'] = array_values( $topics );
+		}
+
 		return $response;
 	}
 

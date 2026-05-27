@@ -75,8 +75,36 @@
           if (res.data.pro_greeting) {
             XenChat.appendMessage('assistant', res.data.pro_greeting);
           }
+          // Pro feature: topic quick-menu chips
+          if (res.data.pro_topics && res.data.pro_topics.length) {
+            XenChat.renderTopicChips(res.data.pro_topics);
+          }
         }
       });
+    },
+
+    /* ── Pro: Render topic chip quick-menu ──────────────── */
+    renderTopicChips: function (topics) {
+      var $bar = $('#xen-ai-topics');
+      if (!$bar.length) return;
+
+      $bar.empty();
+
+      var $label = $('<span class="xen-ai-topics-label">Ask about:</span>');
+      $bar.append($label);
+
+      $.each(topics, function (i, topic) {
+        var $chip = $('<button class="xen-ai-topic-chip" type="button"></button>').text(topic);
+        $chip.on('click', function () {
+          if (XenChat.sending || XenChat.cooldownTimer) return;
+          $('#xen-ai-input').val(topic);
+          XenChat.sendMessage();
+          $bar.fadeOut(200);
+        });
+        $bar.append($chip);
+      });
+
+      $bar.slideDown(220);
     },
 
     /* ── Event bindings ─────────────────────────────────── */

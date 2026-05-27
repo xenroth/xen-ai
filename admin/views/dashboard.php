@@ -143,6 +143,83 @@ $license_record = Xen_AI_License::get_record();
 
 	</div>
 
+	<!-- Getting Started Guide -->
+	<div class="xen-ai-card xen-ai-mt xen-ai-getting-started">
+		<div class="xen-ai-gs-header">
+			<h2 class="xen-ai-card-title" style="margin:0;">🚀 Getting Started</h2>
+			<button type="button" class="xen-ai-gs-toggle" id="xen-gs-toggle" aria-expanded="true" aria-controls="xen-gs-body">
+				<span class="xen-ai-gs-chevron">▾</span>
+			</button>
+		</div>
+		<div id="xen-gs-body" class="xen-ai-gs-body">
+			<p class="xen-ai-gs-intro">Follow these steps to get XEN A.I fully set up on your site:</p>
+			<ol class="xen-ai-gs-steps">
+
+				<li class="xen-ai-gs-step <?php echo $configured ? 'xen-ai-gs-done' : ''; ?>">
+					<div class="xen-ai-gs-step-num"><?php echo $configured ? '✓' : '1'; ?></div>
+					<div class="xen-ai-gs-step-body">
+						<strong>Connect your AI provider</strong>
+						<p>Go to <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-settings' ) ); ?>">Settings</a> and add your <strong>OpenAI API key</strong> (<code>sk-…</code>) or a <strong>GitHub Personal Access Token</strong> (free — works with GitHub Models). Choose your preferred model (GPT-4o, etc.).</p>
+					</div>
+				</li>
+
+				<li class="xen-ai-gs-step">
+					<div class="xen-ai-gs-step-num">2</div>
+					<div class="xen-ai-gs-step-body">
+						<strong>Set your bot's identity</strong>
+						<p>In <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-settings' ) ); ?>">Settings</a>, set the <strong>Bot Name</strong>, upload a <strong>logo/avatar</strong>, choose an <strong>accent colour</strong>, and write a custom <strong>welcome greeting</strong>. This is what visitors will see.</p>
+					</div>
+				</li>
+
+				<li class="xen-ai-gs-step <?php echo $kb_count > 0 ? 'xen-ai-gs-done' : ''; ?>">
+					<div class="xen-ai-gs-step-num"><?php echo $kb_count > 0 ? '✓' : '3'; ?></div>
+					<div class="xen-ai-gs-step-body">
+						<strong>Build your Knowledge Base</strong>
+						<p>Go to <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-kb' ) ); ?>">Knowledge Base</a> and upload PDFs, DOCX or TXT files, or paste a URL to scrape. The AI will prioritise this content when answering visitor questions.</p>
+					</div>
+				</li>
+
+				<li class="xen-ai-gs-step">
+					<div class="xen-ai-gs-step-num">4</div>
+					<div class="xen-ai-gs-step-body">
+						<strong>Customize your system prompt <span class="xen-ai-gs-optional">(optional)</span></strong>
+						<p>In <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-settings' ) ); ?>">Settings</a> under <em>Custom AI Instructions</em>, tell the AI about your business, tone, and anything it should always keep in mind. Example: <em>"Always recommend contacting sales for orders above ₱5,000."</em></p>
+					</div>
+				</li>
+
+				<li class="xen-ai-gs-step">
+					<div class="xen-ai-gs-step-num">5</div>
+					<div class="xen-ai-gs-step-body">
+						<strong>Test the chat widget on your site</strong>
+						<p>Visit any page of your site — the chat bubble will appear in the bottom-right corner. Open it and send a test message to confirm everything is working. Check <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-leads' ) ); ?>">Leads &amp; Conversations</a> to see the conversation logged.</p>
+					</div>
+				</li>
+
+				<li class="xen-ai-gs-step <?php echo $is_pro ? 'xen-ai-gs-done' : ''; ?>">
+					<div class="xen-ai-gs-step-num"><?php echo $is_pro ? '✓' : '6'; ?></div>
+					<div class="xen-ai-gs-step-body">
+						<strong>Activate Pro <span class="xen-ai-gs-optional">(optional)</span></strong>
+						<p><?php if ( $is_pro ) : ?>Your Pro license is active — all advanced features are already enabled including proactive questioning, topic chips and the purchase guide. <?php else : ?>Go to <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>">Pro License</a> and enter your license key to unlock proactive visitor engagement, topic quick-menus, the purchase guide, and all future Pro features. <?php endif; ?></p>
+					</div>
+				</li>
+
+			</ol>
+		</div>
+	</div>
+	<script>
+	(function(){
+		var btn  = document.getElementById('xen-gs-toggle');
+		var body = document.getElementById('xen-gs-body');
+		if (!btn || !body) return;
+		btn.addEventListener('click', function(){
+			var open = btn.getAttribute('aria-expanded') === 'true';
+			btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+			btn.querySelector('.xen-ai-gs-chevron').style.transform = open ? 'rotate(-90deg)' : '';
+			body.style.display = open ? 'none' : '';
+		});
+	})();
+	</script>
+
 	<!-- Quick actions -->
 	<div class="xen-ai-card xen-ai-mt">
 		<h2 class="xen-ai-card-title">Quick Actions</h2>
@@ -209,70 +286,56 @@ $license_record = Xen_AI_License::get_record();
 		</div>
 	</div>
 
-	<!-- Pro Features upsell / unlocked -->
-	<div class="xen-ai-card xen-ai-mt <?php echo $is_pro ? 'xen-ai-pro-card xen-ai-pro-card-active' : 'xen-ai-pro-card'; ?>">
+	<!-- Pro Features upsell (shown only when Pro is NOT active) -->
+	<?php if ( ! $is_pro ) : ?>
+	<div class="xen-ai-card xen-ai-mt xen-ai-pro-card">
 		<div class="xen-ai-pro-header">
 			<div>
-				<?php if ( $is_pro ) : ?>
-				<h2 class="xen-ai-card-title" style="margin:0;">✦ XEN A.I Pro — Your Unlocked Perks</h2>
-				<p style="margin:6px 0 0;color:#16a34a;font-size:0.875rem;font-weight:600;">All features below are active on your license, including every future Pro release.</p>
-				<?php else : ?>
 				<h2 class="xen-ai-card-title" style="margin:0;">✨ XEN A.I Pro</h2>
 				<p style="margin:6px 0 0;color:var(--xen-text-muted);font-size:0.875rem;">Supercharge your chat assistant with advanced engagement tools.</p>
-				<?php endif; ?>
 			</div>
-			<?php if ( $is_pro ) : ?>
-			<span class="xen-ai-pro-badge" style="background:linear-gradient(135deg,#22c55e,#16a34a);">✅ Pro Active</span>
-			<?php else : ?>
 			<span class="xen-ai-pro-badge">Coming Soon</span>
-			<?php endif; ?>
 		</div>
 
 		<div class="xen-ai-pro-features-grid">
 
-			<div class="xen-ai-pro-feature <?php echo $is_pro ? 'xen-ai-pro-feature-unlocked' : ''; ?>">
-				<span class="xen-ai-pro-feature-icon"><?php echo $is_pro ? '✅' : '🎯'; ?></span>
+			<div class="xen-ai-pro-feature">
+				<span class="xen-ai-pro-feature-icon">🎯</span>
 				<div>
 					<strong>Proactive Visitor Questioning</strong>
 					<p>The AI automatically initiates targeted questions to understand each visitor's needs before they even type — driving deeper engagement from the first second.</p>
 				</div>
 			</div>
 
-			<div class="xen-ai-pro-feature <?php echo $is_pro ? 'xen-ai-pro-feature-unlocked' : ''; ?>">
-				<span class="xen-ai-pro-feature-icon"><?php echo $is_pro ? '✅' : '📋'; ?></span>
+			<div class="xen-ai-pro-feature">
+				<span class="xen-ai-pro-feature-icon">📋</span>
 				<div>
 					<strong>Knowledge-Base Topic Insights</strong>
 					<p>Surfaces a real-time list of knowledge-base topics most relevant to what the visitor is browsing, so they always find the answers they need instantly.</p>
 				</div>
 			</div>
 
-			<div class="xen-ai-pro-feature <?php echo $is_pro ? 'xen-ai-pro-feature-unlocked' : ''; ?>">
-				<span class="xen-ai-pro-feature-icon"><?php echo $is_pro ? '✅' : '🛒'; ?></span>
+			<div class="xen-ai-pro-feature">
+				<span class="xen-ai-pro-feature-icon">🛒</span>
 				<div>
 					<strong>Service &amp; Product Purchase Guide</strong>
 					<p>Step-by-step conversational guidance that walks prospects through your offerings and seamlessly directs them to checkout or a sales contact.</p>
 				</div>
 			</div>
 
-			<?php if ( $is_pro ) : ?>
-			<div class="xen-ai-pro-feature xen-ai-pro-feature-future">
-				<span class="xen-ai-pro-feature-icon">🔮</span>
+			<div class="xen-ai-pro-feature">
+				<span class="xen-ai-pro-feature-icon">💬</span>
 				<div>
-					<strong>All Future Pro Features — Included</strong>
-					<p>Every new capability added to the Pro tier is automatically unlocked for your license at no extra cost. You are set for life.</p>
+					<strong>Topic Quick-Menu in Chat</strong>
+					<p>Clickable topic chips appear above the chat input, letting visitors jump straight to any knowledge-base topic with one tap — no typing needed.</p>
 				</div>
 			</div>
-			<?php endif; ?>
 
 		</div>
 
 		<div class="xen-ai-pro-cta">
-			<?php if ( $is_pro ) : ?>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-btn xen-ai-btn-secondary">🔑 Manage License</a>
-			<?php else : ?>
-				<span class="xen-ai-pro-price">₱999 <small>one-time</small></span>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-btn xen-ai-btn-pro" style="opacity:1;cursor:pointer;">🔑 Activate Pro License</a>
-			<?php endif; ?>
+			<span class="xen-ai-pro-price">₱999 <small>one-time</small></span>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>" class="xen-ai-btn xen-ai-btn-pro" style="opacity:1;cursor:pointer;">🔑 Activate Pro License</a>
 		</div>
 
 		<div class="xen-ai-pro-contact">
@@ -282,6 +345,7 @@ $license_record = Xen_AI_License::get_record();
 			<a href="tel:+639150388448">+63 915 038 8448</a>
 		</div>
 	</div>
+	<?php endif; ?>
 
 	<!-- Status card -->
 	<div class="xen-ai-card xen-ai-mt">

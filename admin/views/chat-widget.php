@@ -78,6 +78,9 @@ $xen_avatar = function( $size, $bot_name, $bot_logo ) {
 			<span></span><span></span><span></span>
 		</div>
 
+		<!-- Pro: Topic quick-menu chips (populated by JS when Pro license active & KB has topics) -->
+		<div id="xen-ai-topics" class="xen-ai-topics" style="display:none;" aria-label="<?php esc_attr_e( 'Quick topic shortcuts', 'xen-ai' ); ?>"></div>
+
 		<!-- Input -->
 		<div class="xen-ai-input-row">
 			<textarea id="xen-ai-input"
