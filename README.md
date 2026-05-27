@@ -23,7 +23,7 @@ An AI-powered chat assistant for WordPress that combines your website's own know
 
 ---
 
-## Pro Features *(Coming Soon — ₱999 one-time)*
+## Pro Features *(₱999 one-time payment)*
 
 - 🎯 **Proactive Visitor Questioning** — AI initiates targeted questions before the visitor types.
 - 📋 **Knowledge-Base Topic Insights** — Real-time list of KB topics most relevant to what the visitor is browsing.
