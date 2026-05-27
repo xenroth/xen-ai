@@ -2,7 +2,7 @@
 
 > **Author:** Xenroth (Richard C. Cupal, LPT)
 > **Contact:** [me@xenroth.com](mailto:me@xenroth.com) · [+63 915 038 8448](tel:+639150388448)
-> **Version:** 1.0.0 · **License:** GPL v2 or later
+> **Version:** 1.2.1· **License:** GPL v2 or later
 
 An AI-powered chat assistant for WordPress that combines your website's own knowledge base with live site content (pages, posts, and WooCommerce products) to answer visitor questions, capture leads, and guide users through your services or store — all from a beautiful floating chat widget.
 
