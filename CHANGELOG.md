@@ -4,6 +4,16 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.3.1] — 2026-05-29
+
+### Branding
+
+- **Official plugin icon added** — `assets/icon-128x128.png` and `assets/icon-256x256.png` added to the repository for display on WordPress.org plugin listing pages.
+- **Plugin list icon** — `class-updater.php` now returns `icons` (1x/2x) in both the update transient and `plugin_information` response, so the XEN AI logo appears in the WordPress admin Plugins list and Updates screen for self-hosted installs.
+- **Banner added** — `assets/banner-772x250.png` added for the WordPress.org plugin header banner.
+
+---
+
 ## [1.3.0] — 2026-05-28
 
 ### WordPress Repository Compliance

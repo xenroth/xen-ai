@@ -90,8 +90,13 @@ class Xen_AI_Updater {
 				'new_version' => $remote_version,
 				'url'         => $release['html_url'],
 				'package'     => $this->get_download_url( $release ),
-				'icons'       => [],
-				'banners'     => [],
+				'icons'       => [
+					'1x' => 'https://raw.githubusercontent.com/xenroth/xen-ai/main/assets/icon-128x128.png',
+					'2x' => 'https://raw.githubusercontent.com/xenroth/xen-ai/main/assets/icon-256x256.png',
+				],
+				'banners'     => [
+					'low'  => 'https://raw.githubusercontent.com/xenroth/xen-ai/main/assets/banner-772x250.png',
+				],
 				'tested'      => '',
 				'requires_php'=> '7.4',
 			];
@@ -147,7 +152,13 @@ class Xen_AI_Updater {
 				'description' => 'AI-powered chat assistant with knowledge base, lead capture, and full admin management.',
 				'changelog'   => nl2br( esc_html( $release['body'] ?? '' ) ),
 			],
-			'banners'       => [],
+			'banners'       => [
+				'low'  => 'https://raw.githubusercontent.com/xenroth/xen-ai/main/assets/banner-772x250.png',
+			],
+			'icons'         => [
+				'1x' => 'https://raw.githubusercontent.com/xenroth/xen-ai/main/assets/icon-128x128.png',
+				'2x' => 'https://raw.githubusercontent.com/xenroth/xen-ai/main/assets/icon-256x256.png',
+			],
 		];
 	}
 
