@@ -101,8 +101,18 @@ $license_record = Xen_AI_License::get_record();
 	<?php endif; ?>
 
 	<!-- Status card -->
-	<div class="xen-ai-card xen-ai-mt">
-		<h2 class="xen-ai-card-title">System Status</h2>
+	<div class="xen-ai-card xen-ai-mt" style="margin-bottom:24px;">
+		<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+			<h2 class="xen-ai-card-title" style="margin:0;">System Status</h2>
+			<button type="button" id="xen-test-connection-btn" class="button button-small">🔌 Test Connection</button>
+		</div>
+		<div id="xen-test-connection-result" style="display:none;margin-bottom:14px;"></div>
+		<?php if ( get_transient( 'xen_ai_api_unavailable' ) ) : ?>
+		<div class="xen-ai-notice xen-ai-notice-warn" style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
+			<span>⚠ <strong>Fallback mode is active.</strong> A recent API error (quota/rate limit) has put the chatbot in offline mode — visitors are seeing the fallback message. This auto-clears in 5 minutes, or click Clear to reset it immediately.</span>
+			<button type="button" id="xen-clear-fallback-btn" class="button button-small" style="white-space:nowrap;flex-shrink:0;">Clear Now</button>
+		</div>
+		<?php endif; ?>
 		<?php
 		$provider_name = 'github' === ( $settings['provider'] ?? 'openai' ) ? 'GitHub Models' : 'OpenAI';
 		$active_model  = 'github' === ( $settings['provider'] ?? 'openai' )

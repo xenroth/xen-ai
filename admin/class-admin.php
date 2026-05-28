@@ -24,6 +24,8 @@ class Xen_AI_Admin {
 		add_action( 'wp_ajax_xen_ai_activate_license',   [ $this, 'ajax_activate_license' ] );
 		add_action( 'wp_ajax_xen_ai_deactivate_license', [ $this, 'ajax_deactivate_license' ] );
 		add_action( 'wp_ajax_xen_ai_wipe_data',          [ $this, 'ajax_wipe_data' ] );
+		add_action( 'wp_ajax_xen_ai_test_connection',    [ $this, 'ajax_test_connection' ] );
+		add_action( 'wp_ajax_xen_ai_clear_fallback',     [ $this, 'ajax_clear_fallback' ] );
 	}
 
 	// ── Menus ─────────────────────────────────────────────────────────────────
@@ -520,6 +522,80 @@ class Xen_AI_Admin {
 		Xen_AI_Core::activate();
 
 		wp_send_json_success( [ 'message' => __( 'All XEN A.I data has been wiped. Tables have been recreated fresh.', 'xen-ai' ) ] );
+	}
+
+	/**
+	 * Test the currently configured AI provider connection.
+	 * Makes a minimal real API call and returns a human-readable result.
+	 */
+	public function ajax_test_connection() {
+		$this->verify_admin_nonce();
+
+		$ai = new Xen_AI_Handler();
+
+		if ( ! $ai->is_configured() ) {
+			wp_send_json_error( [
+				'message' => __( 'No API key or token is configured. Go to Settings and add one first.', 'xen-ai' ),
+				'type'    => 'not_configured',
+			] );
+		}
+
+		// Make a minimal real call (uses the same path as a real chat message).
+		$result = $ai->get_response(
+			[ [ 'role' => 'user', 'content' => 'Reply with the single word ok.' ] ],
+			'',
+			[]
+		);
+
+		if ( is_wp_error( $result ) ) {
+			$code = $result->get_error_code();
+			$msg  = $result->get_error_message();
+
+			$is_quota = (
+				false !== stripos( $msg, 'quota' )       ||
+				false !== stripos( $msg, 'insufficient' ) ||
+				false !== stripos( $msg, 'billing' )      ||
+				false !== stripos( $msg, 'rate limit' )   ||
+				false !== stripos( $msg, 'rate_limit' )   ||
+				false !== stripos( $msg, '429' )
+			);
+			$is_auth = (
+				false !== stripos( $msg, 'incorrect api key' ) ||
+				false !== stripos( $msg, 'invalid api key' )   ||
+				false !== stripos( $msg, 'unauthorized' )       ||
+				in_array( $code, [ 'no_api_key', 'no_token' ], true )
+			);
+
+			if ( $is_quota ) {
+				wp_send_json_error( [
+					'message' => __( 'Key recognised but account has no available credits/quota. For OpenAI, add billing at platform.openai.com/account/billing. GitHub Models are free — try switching to GitHub PAT.', 'xen-ai' ),
+					'type'    => 'quota',
+				] );
+			}
+			if ( $is_auth ) {
+				wp_send_json_error( [
+					'message' => __( 'Authentication failed — the key or token is incorrect or has been revoked. Please re-enter it in Settings.', 'xen-ai' ),
+					'type'    => 'auth',
+				] );
+			}
+
+			wp_send_json_error( [ 'message' => $msg, 'type' => 'error' ] );
+		}
+
+		wp_send_json_success( [
+			'message' => __( 'Connection successful! The API key is valid and responding normally.', 'xen-ai' ),
+		] );
+	}
+
+	/**
+	 * Manually clear the API-unavailable transient so the chatbot exits fallback mode immediately.
+	 */
+	public function ajax_clear_fallback() {
+		$this->verify_admin_nonce();
+		delete_transient( 'xen_ai_api_unavailable' );
+		wp_send_json_success( [
+			'message' => __( 'Fallback mode cleared. The chatbot will attempt live AI responses again.', 'xen-ai' ),
+		] );
 	}
 
 	private function check_cap() {

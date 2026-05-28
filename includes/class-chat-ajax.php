@@ -376,10 +376,9 @@ class Xen_AI_Chat_Ajax {
 		// the API is reachable — it's the key that's wrong).
 		$is_auth = (
 			false !== stripos( $raw, 'incorrect api key' ) ||
-			false !== stripos( $raw, 'invalid api key' ) ||
+			false !== stripos( $raw, 'invalid api key' )   ||
 			false !== stripos( $raw, 'invalid authentication' ) ||
-			false !== stripos( $raw, 'authentication' ) ||
-			false !== stripos( $raw, 'unauthorized' ) ||
+			false !== stripos( $raw, 'unauthorized' )       ||
 			false !== stripos( $raw, '401' )
 		);
 

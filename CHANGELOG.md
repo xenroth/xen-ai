@@ -4,6 +4,22 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.6] — 2026-05-28
+
+### Improvements
+
+- **System Status: Test Connection button** — a new "🔌 Test Connection" button in the System Status card makes a live API call and immediately tells you whether your key is valid, has no credits, or is failing for another reason. This makes it easy to diagnose why the chatbot shows the fallback message without needing to check error logs.
+
+- **System Status: Fallback Mode indicator with Clear button** — when the `xen_ai_api_unavailable` transient is active (meaning the chatbot is in offline/fallback mode after a quota or rate-limit error), a clear warning is now shown in the System Status card with a "Clear Now" button to exit fallback mode immediately without waiting the full 5 minutes.
+
+- **System Status card spacing** — added bottom margin below the System Status card so subsequent sections on the dashboard are visually separated.
+
+### Bug Fixes
+
+- **`$is_auth` pattern too broad** — the previous `'authentication'` substring check in `map_error_to_friendly()` could match incidentally in non-auth error messages (e.g. phrases like "authentication required for additional usage"). Removed the broad match and kept only the specific patterns (`incorrect api key`, `invalid api key`, `invalid authentication`, `unauthorized`, `401`).
+
+---
+
 ## [1.2.5] — 2026-05-28
 
 ### Bug Fixes

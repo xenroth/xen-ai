@@ -318,4 +318,56 @@
   // Here we register the server-side handler registration note:
   // action = xen_ai_get_messages (registered in class-admin.php below)
 
+  /* ─────────────────────────────────────────────────────── */
+  /* Dashboard — Test API Connection                         */
+  /* ─────────────────────────────────────────────────────── */
+  $(document).on('click', '#xen-test-connection-btn', function () {
+    var $btn    = $(this);
+    var $result = $('#xen-test-connection-result');
+    var orig    = $btn.html();
+
+    $btn.prop('disabled', true).html('⏳ Testing…');
+    $result.hide().removeAttr('class');
+
+    $.post(xenAIAdmin.ajaxUrl, {
+      action: 'xen_ai_test_connection',
+      nonce:  xenAIAdmin.nonce,
+    })
+    .done(function (res) {
+      var type = 'xen-ai-notice xen-ai-notice-';
+      if (res.success) {
+        type += 'ok';
+      } else if (res.data && res.data.type === 'quota') {
+        type += 'warn';
+      } else {
+        type += 'error';
+      }
+      var icon = res.success ? '✅' : (res.data && res.data.type === 'quota' ? '⚠' : '❌');
+      $result.addClass(type).html(icon + ' ' + ((res.data && res.data.message) || 'Done.')).show();
+    })
+    .fail(function () {
+      $result.addClass('xen-ai-notice xen-ai-notice-error').html('❌ Request failed. Please check your connection.').show();
+    })
+    .always(function () { $btn.prop('disabled', false).html(orig); });
+  });
+
+  /* Dashboard — Clear Fallback Mode                         */
+  $(document).on('click', '#xen-clear-fallback-btn', function () {
+    var $btn = $(this);
+    $btn.prop('disabled', true).html('⏳');
+
+    $.post(xenAIAdmin.ajaxUrl, {
+      action: 'xen_ai_clear_fallback',
+      nonce:  xenAIAdmin.nonce,
+    })
+    .done(function (res) {
+      if (res.success) {
+        $btn.closest('.xen-ai-notice').slideUp(300);
+      } else {
+        $btn.prop('disabled', false).html('Clear Now');
+      }
+    })
+    .fail(function () { $btn.prop('disabled', false).html('Clear Now'); });
+  });
+
 })(jQuery);
