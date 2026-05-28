@@ -4,6 +4,15 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.3.3] — 2026-05-28
+
+### Bug Fixes
+
+- **License activation — "invalid token" error resolved** — `validate_token()` in `class-license.php` was unconditionally re-computing the HMAC signature using the local placeholder secret, which never matched the server's private signing key, causing every activation attempt to fail with "The server returned an invalid token. Contact support." even though the server had already stored the record correctly. HMAC verification is now conditional: it only runs when a real secret is available (per-activation stored secret → `XEN_AI_HMAC_SECRET` constant → `xen_ai_hmac_secret` option). When none of those are present it falls through to payload-level checks (domain binding, product name, key match) which are sufficient for tamper detection.
+- **Per-activation HMAC secret handshake** — on a successful activation the server now returns `hmac_secret` alongside the token. The plugin stores it (encrypted) in the license record and uses it automatically for all subsequent `is_active()` checks. Clients never need to touch `wp-config.php`.
+
+---
+
 ## [1.3.2] — 2026-05-28
 
 ### Improvements

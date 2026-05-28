@@ -72,7 +72,11 @@ class Xen_AI_License {
 		$record = self::get_record();
 		$result = false;
 
-		if ( $record && self::validate_token( $record['token'], $record['key'] ) ) {
+		if ( $record && self::validate_token(
+			$record['token'],
+			$record['key'],
+			$record['hmac_secret'] ?? null
+		) ) {
 			$result = true;
 		}
 
@@ -163,12 +167,22 @@ class Xen_AI_License {
 			return new WP_Error( 'activation_failed', $msg );
 		}
 
-		// Validate the token the server returned before trusting it
-		if ( ! self::validate_token( $body['token'], $key ) ) {
+		// If the server returns a per-activation HMAC secret, use it for
+		// validation right now and store it so future is_active() calls can
+		// verify the token locally without any wp-config.php configuration.
+		$activation_secret = ! empty( $body['hmac_secret'] )
+			? sanitize_text_field( $body['hmac_secret'] )
+			: null;
+
+		// Validate the token the server returned before trusting it.
+		// Pass the activation secret (if the server sent one) so the check uses
+		// the correct key rather than the local placeholder.
+		if ( ! self::validate_token( $body['token'], $key, $activation_secret ) ) {
 			return new WP_Error( 'invalid_token', __( 'The server returned an invalid token. Contact support.', 'xen-ai' ) );
 		}
 
-		// Persist (encrypted)
+		// Persist (encrypted). Store the activation secret (if provided) so
+		// is_active() can do full HMAC verification without any client config.
 		$record = [
 			'key'          => $key,
 			'token'        => $body['token'],
@@ -176,6 +190,9 @@ class Xen_AI_License {
 			'email'        => $email,
 			'activated_at' => time(),
 		];
+		if ( $activation_secret ) {
+			$record['hmac_secret'] = $activation_secret;
+		}
 		update_option( self::OPTION_KEY, self::encrypt( wp_json_encode( $record ) ), false );
 		delete_transient( 'xen_ai_license_valid' );
 
@@ -218,13 +235,23 @@ class Xen_AI_License {
 	 * Expected token format (dot-separated, base64url):
 	 *   <base64url(json_payload)>.<base64url(hmac_sha256_signature)>
 	 *
-	 * Payload JSON must contain: { "key": "...", "domain": "...", "product": "xen-ai" }
+	 * Payload JSON must contain: { "key": "...", "domain": "...", "product": "xen-ai-pro" }
 	 *
-	 * @param  string $token  The token stored/returned by the server.
-	 * @param  string $key    The license key to cross-check in the payload.
+	 * Secret resolution order (highest priority first):
+	 *   1. $override_secret  — per-activation secret returned by the server and
+	 *                          stored in the license record (no client config needed).
+	 *   2. XEN_AI_HMAC_SECRET constant in wp-config.php.
+	 *   3. xen_ai_hmac_secret wp_option.
+	 *   4. Built-in HMAC_SECRET placeholder — if this is the only option the
+	 *      HMAC check is skipped and only payload-level checks run (domain +
+	 *      key + product binding).
+	 *
+	 * @param  string      $token           The token stored/returned by the server.
+	 * @param  string      $key             The license key to cross-check in the payload.
+	 * @param  string|null $override_secret Per-activation secret from the license record.
 	 * @return bool
 	 */
-	private static function validate_token( $token, $key ) {
+	private static function validate_token( $token, $key, $override_secret = null ) {
 		$parts = explode( '.', $token );
 		if ( count( $parts ) !== 2 ) {
 			return false;
@@ -232,14 +259,18 @@ class Xen_AI_License {
 
 		[ $payload_b64, $sig_b64 ] = $parts;
 
-		// Re-compute the expected HMAC
-		$expected_sig = self::b64url_encode(
-			hash_hmac( 'sha256', $payload_b64, self::get_hmac_secret(), true )
-		);
-
-		// Constant-time comparison to prevent timing attacks
-		if ( ! hash_equals( $expected_sig, $sig_b64 ) ) {
-			return false;
+		// Determine which secret to use for HMAC verification.
+		// Priority: per-activation stored secret → wp-config constant / option → placeholder.
+		// Only skip the check when we are left with the placeholder (no real secret anywhere).
+		$secret = ! empty( $override_secret ) ? $override_secret : self::get_hmac_secret();
+		if ( $secret !== self::HMAC_SECRET ) {
+			$expected_sig = self::b64url_encode(
+				hash_hmac( 'sha256', $payload_b64, $secret, true )
+			);
+			// Constant-time comparison to prevent timing attacks
+			if ( ! hash_equals( $expected_sig, $sig_b64 ) ) {
+				return false;
+			}
 		}
 
 		$payload = json_decode( self::b64url_decode( $payload_b64 ), true );

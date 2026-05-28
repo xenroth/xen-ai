@@ -3,7 +3,7 @@
  * Plugin Name: XEN A.I
  * Plugin URI:  https://github.com/xenroth/xen-ai
  * Description: AI-powered chat assistant with website knowledge base, lead capture, and full admin management.
- * Version:     1.3.2
+ * Version:     1.3.3
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      Xenroth (Richard C. Cupal, LPT)
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────────
-define( 'XEN_AI_VERSION',          '1.3.2' );
+define( 'XEN_AI_VERSION',          '1.3.3' );
 define( 'XEN_AI_PLUGIN_FILE',      __FILE__ );
 define( 'XEN_AI_PLUGIN_DIR',       plugin_dir_path( __FILE__ ) );
 define( 'XEN_AI_PLUGIN_URL',       plugin_dir_url( __FILE__ ) );
