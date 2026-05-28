@@ -142,15 +142,25 @@ class Xen_AI_Admin {
 			$settings['provider'] = 'openai';
 		}
 
-		// Preserve saved secrets: don't overwrite with the display mask OR an empty value.
-		// An empty POST value means the field wasn't changed, not that the user wants to clear it.
-		if ( ( '' === $settings['api_key'] || '••••••••' === $settings['api_key'] ) && ! empty( $raw['api_key'] ) ) {
+		// Clean up any previously corrupted DB values where only the display mask was saved.
+		// Strips leading/trailing bullet-mask chars so a real key can be recovered if it was
+		// accidentally appended to the mask in an older version (e.g. "••••••••sk-real").
+		$display_mask = '••••••••';
+		foreach ( [ 'api_key', 'github_token', 'turnstile_secret_key' ] as $_sk ) {
+			if ( isset( $raw[ $_sk ] ) && false !== strpos( $raw[ $_sk ], $display_mask ) ) {
+				$raw[ $_sk ] = trim( str_replace( $display_mask, '', $raw[ $_sk ] ) );
+			}
+		}
+
+		// Preserve saved secrets: an empty submitted value means the field was left blank
+		// (user did not change the key), so keep the existing stored value.
+		if ( '' === $settings['api_key'] && ! empty( $raw['api_key'] ) ) {
 			$settings['api_key'] = $raw['api_key'];
 		}
-		if ( ( '' === $settings['github_token'] || '••••••••' === $settings['github_token'] ) && ! empty( $raw['github_token'] ) ) {
+		if ( '' === $settings['github_token'] && ! empty( $raw['github_token'] ) ) {
 			$settings['github_token'] = $raw['github_token'];
 		}
-		if ( ( '' === $settings['turnstile_secret_key'] || '••••••••' === $settings['turnstile_secret_key'] ) && ! empty( $raw['turnstile_secret_key'] ) ) {
+		if ( '' === $settings['turnstile_secret_key'] && ! empty( $raw['turnstile_secret_key'] ) ) {
 			$settings['turnstile_secret_key'] = $raw['turnstile_secret_key'];
 		}
 

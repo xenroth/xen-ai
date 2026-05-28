@@ -4,6 +4,14 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.3] — 2026-05-28
+
+### Bug Fixes
+
+- **API key save regression (proper fix)** — the 1.2.2 focus/blur mask-clearing approach was fragile: it depended on character-exact comparison between the JavaScript constant and the PHP-rendered value, and silently failed if the user never clicked the field before saving. The architecture has been corrected: all three secret fields (`api_key`, `github_token`, `turnstile_secret_key`) now render with `value=""` and display the `••••••••` indicator only in the `placeholder`. An empty submission means "keep existing key"; any non-empty submission is treated as a new key. The PHP preserve logic is simplified to a single empty-string check. A one-time DB cleanup also strips any previously corrupted `••••••••`-prefixed values that may have been saved before this fix.
+
+---
+
 ## [1.2.2] — 2026-05-28
 
 ### Bug Fixes

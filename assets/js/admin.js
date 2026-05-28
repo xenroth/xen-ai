@@ -12,27 +12,6 @@
   }
 
   /* ─────────────────────────────────────────────────────── */
-  /* Secret field mask: clear on focus, restore on blur      */
-  /* Prevents the ••••••••  placeholder value from being     */
-  /* prepended to a newly-typed key and saved as invalid.    */
-  /* ─────────────────────────────────────────────────────── */
-  var MASK = '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022'; // ••••••••
-
-  $(document).on('focus', '#xen-api-key, #xen-github-token, #xen-turnstile-secret', function () {
-    var $el = $(this);
-    if ($el.val() === MASK) {
-      $el.val('').data('mask-cleared', true);
-    }
-  });
-
-  $(document).on('blur', '#xen-api-key, #xen-github-token, #xen-turnstile-secret', function () {
-    var $el = $(this);
-    if ($el.data('mask-cleared') && $el.val() === '') {
-      $el.val(MASK).data('mask-cleared', false);
-    }
-  });
-
-  /* ─────────────────────────────────────────────────────── */
   /* Provider tab toggle                                     */
   /* ─────────────────────────────────────────────────────── */
   $(document).on('change', 'input[name="provider"]', function () {

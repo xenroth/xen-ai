@@ -64,9 +64,9 @@ $current_provider = xen_v( 'provider', 'openai' );
 					<div class="xen-ai-field-body">
 						<input type="password" id="xen-api-key" name="api_key"
 						       class="xen-ai-input-field"
-						       value="<?php echo esc_attr( ! empty( $settings['api_key'] ) ? '••••••••' : '' ); ?>"
-						       placeholder="sk-…"
-						       autocomplete="off">
+						       value=""
+						       placeholder="<?php echo ! empty( $settings['api_key'] ) ? esc_attr( '•••••••• (saved — leave blank to keep current key)' ) : 'sk-…'; ?>"
+						       autocomplete="new-password">
 						<p class="xen-ai-help">
 							Get your API key at
 							<a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">platform.openai.com/api-keys</a>.
@@ -97,9 +97,9 @@ $current_provider = xen_v( 'provider', 'openai' );
 					<div class="xen-ai-field-body">
 						<input type="password" id="xen-github-token" name="github_token"
 						       class="xen-ai-input-field"
-						       value="<?php echo esc_attr( ! empty( $settings['github_token'] ) ? '••••••••' : '' ); ?>"
-						       placeholder="github_pat_…"
-						       autocomplete="off">
+						       value=""
+						       placeholder="<?php echo ! empty( $settings['github_token'] ) ? esc_attr( '•••••••• (saved — leave blank to keep current token)' ) : 'github_pat_…'; ?>"
+						       autocomplete="new-password">
 						<p class="xen-ai-help">
 							Generate a <strong>Classic Personal Access Token</strong> (no special scopes needed) at
 							<a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">github.com/settings/tokens</a>.
@@ -287,9 +287,9 @@ $current_provider = xen_v( 'provider', 'openai' );
 				<div class="xen-ai-field-body">
 					<input type="password" id="xen-turnstile-secret" name="turnstile_secret_key"
 					       class="xen-ai-input-field"
-					       value="<?php echo xen_v( 'turnstile_secret_key' ) ? '••••••••' : ''; ?>"
-					       placeholder="0x4AAAAAAA…">
-					<p class="xen-ai-help">Required when a site key is set. Saved encrypted; leave the dots in place to keep the existing value.</p>
+					       value=""
+					       placeholder="<?php echo xen_v( 'turnstile_secret_key' ) ? esc_attr( '•••••••• (saved — leave blank to keep current key)' ) : '0x4AAAAAAA…'; ?>">
+					<p class="xen-ai-help">Required when a site key is set. Leave blank to keep the existing value.</p>
 				</div>
 			</div>
 
