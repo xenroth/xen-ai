@@ -146,19 +146,26 @@ $license_record = Xen_AI_License::get_record();
 		</table>
 	</div>
 
-	<!-- ── LINE Community & Announcements (always visible) ─────
-	<div class="xen-ai-community-bar">
-		<div class="xen-ai-community-bar-inner">
-			<span class="xen-ai-community-bar-icon">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .5C5.649.5.5 4.534.5 9.5c0 4.41 3.914 8.112 9.21 8.878.358.077.846.236.97.542.11.278.072.713.035 1.003l-.157.947c-.048.278-.222 1.086.952.592 1.174-.494 6.334-3.729 8.641-6.385C21.604 13.14 23.5 11.437 23.5 9.5 23.5 4.534 18.351.5 12 .5z"/></svg>
-			</span>
-			<div class="xen-ai-community-bar-text">
-				<strong>Community &amp; Announcements</strong>
-				<span>Get plugin updates, tips, and announcements directly from the developer. &nbsp;<strong>⚠ Always check for updates</strong> under <em>WordPress → Plugins</em> to download the latest version.</span>
+	<!-- ── Version Announcement & Community (always visible) ────── -->
+	<div class="xen-ai-announcement-bar">
+		<div class="xen-ai-announcement-inner">
+			<div class="xen-ai-announcement-left">
+				<span class="xen-ai-announcement-badge">🎉 WHAT'S NEW</span>
+				<h3 class="xen-ai-announcement-title">XEN A.I v<?php echo esc_html( XEN_AI_VERSION ); ?> is Here!</h3>
+				<ul class="xen-ai-announcement-list">
+					<li>✨ Proactive email capture &mdash; witty invite on the 4th reply</li>
+					<li>🔌 Test Connection diagnostics + Fallback Mode indicator on dashboard</li>
+					<li>🔒 Layered security hardening (burst &amp; session flood protection)</li>
+				</ul>
 			</div>
-			<a href="https://line.me/R/ti/g/DBGUQQdSg2" target="_blank" rel="noopener noreferrer" class="xen-ai-btn xen-ai-btn-line xen-ai-btn-line-sm">
-				Join LINE Group →
-			</a>
+			<div class="xen-ai-announcement-right">
+				<strong class="xen-ai-announcement-line-title">💬 Join Our LINE Community</strong>
+				<p class="xen-ai-announcement-line-desc">Get updates, tips &amp; direct developer support &mdash; free Pro license giveaways for early members!</p>
+				<a href="https://line.me/R/ti/g/DBGUQQdSg2" target="_blank" rel="noopener noreferrer" class="xen-ai-btn xen-ai-btn-line xen-ai-btn-line-sm">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="vertical-align:middle;margin-right:5px;"><path d="M12 .5C5.649.5.5 4.534.5 9.5c0 4.41 3.914 8.112 9.21 8.878.358.077.846.236.97.542.11.278.072.713.035 1.003l-.157.947c-.048.278-.222 1.086.952.592 1.174-.494 6.334-3.729 8.641-6.385C21.604 13.14 23.5 11.437 23.5 9.5 23.5 4.534 18.351.5 12 .5z"/></svg>
+					Join LINE Group →
+				</a>
+			</div>
 		</div>
 	</div>
 

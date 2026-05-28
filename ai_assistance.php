@@ -7,7 +7,7 @@
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      Xenroth (Richard C. Cupal, LPT)
- * Author URI:  mailto:me@xenroth.com
+ * Author URI:  https://github.com/xenroth
  * Contact:     +63 915 038 8448 | me@xenroth.com
  * License:     GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
