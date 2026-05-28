@@ -193,9 +193,19 @@ class Xen_AI_Chat_Ajax {
 		$context = apply_filters( 'xen_ai_chat_context', $context, $message );
 
 		// ── Call AI ────────────────────────────────────────────────────────────
+		// Count how many bot replies have already been sent in this session.
+		// Used by the system prompt to decide when to ask for the visitor's email.
+		$reply_count = 0;
+		foreach ( $history as $_hm ) {
+			if ( 'assistant' === $_hm->role ) {
+				$reply_count++;
+			}
+		}
+
 		$lead_status = [
-			'has_name'  => ! empty( $conv->user_name ),
-			'has_email' => ! empty( $conv->user_email ),
+			'has_name'    => ! empty( $conv->user_name ),
+			'has_email'   => ! empty( $conv->user_email ),
+			'reply_count' => $reply_count,
 		];
 		$ai       = new Xen_AI_Handler();
 		$raw      = $ai->get_response( $messages, $context, $lead_status );

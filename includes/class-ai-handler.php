@@ -247,10 +247,23 @@ class Xen_AI_Handler {
 			$p .= "- You already know the visitor's name. Do NOT ask for it again. Address them by name naturally when appropriate.\n";
 		}
 
+		$reply_count = isset( $conv_state['reply_count'] ) ? (int) $conv_state['reply_count'] : 0;
+
 		if ( ! $has_email ) {
-			$p .= "- After some natural back-and-forth — once you have helped with their main question or they show clear interest — politely ask for their email once, only if it feels natural. ";
-			$p .= "For example: \"Would you like me to send you more details or follow up? If so, may I have your email address?\" Do NOT ask for the email in the first 1–2 messages.\n";
-			$p .= "- When the visitor shares an email address, include this token on its own line at the very end of your message: [EMAIL: <value>]\n";
+			if ( $reply_count < 3 ) {
+				// Too early — focus on helping; capture only if offered spontaneously.
+				$p .= "- Do NOT ask for the visitor's email address yet. Focus entirely on being helpful.\n";
+				$p .= "- However, if the visitor volunteers their email spontaneously, capture it with this token on its own line at the end of your reply: [EMAIL: <value>]\n";
+			} elseif ( 3 === $reply_count ) {
+				// Sweet spot — ask now, wittily, making them feel privileged.
+				$p .= "- **This is the moment to ask for the visitor's email.** Weave the ask into your current reply in a warm, witty way that makes them feel genuinely special — like they're being let into an exclusive club, not just being data-harvested. ";
+				$p .= "Example tone (adapt freely to the conversation): \"I don't do this for everyone, but you've honestly been such a pleasure to chat with today — would you mind sharing your email? I'll make sure you're the first to know about any exclusive offers or updates. Zero spam, I promise! 😊\" ";
+				$p .= "The ask must be present in this reply. Keep it short, charming, and non-pushy.\n";
+				$p .= "- When the visitor provides their email address, include this token on its own line at the very end of your reply: [EMAIL: <value>]\n";
+			} else {
+				// Already asked — don't push; only capture if offered.
+				$p .= "- Do not bring up email again. If the visitor offers their email address on their own, include this token on its own line at the end of your reply: [EMAIL: <value>]\n";
+			}
 		} else {
 			$p .= "- You already have the visitor's email address. Do NOT ask for it again.\n";
 		}

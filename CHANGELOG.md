@@ -4,6 +4,16 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.7] — 2026-05-28
+
+### Improvements
+
+- **Proactive email capture after the 4th reply** — the bot now asks for the visitor's email address on its 4th reply (after 3 exchanges), making the ask feel like a privilege rather than a data grab. The AI frames it wittily — something like *"I don't do this for everyone, but you've been such a pleasure to chat with — would you mind sharing your email? I'll make sure you're first to hear about any exclusive offers. Zero spam!"* — then never asks again. Before the 4th reply the bot stays focused on helping; after the ask it only captures email if the visitor volunteers it naturally.
+
+  Technically: `reply_count` is now tracked per session (counted from the in-memory message history) and passed to the system prompt builder. Three reply-count branches drive distinct instructions: too-early (don't ask), on-the-dot (ask wittily), already-asked (don't push).
+
+---
+
 ## [1.2.6] — 2026-05-28
 
 ### Improvements
