@@ -2,7 +2,7 @@
 
 > **Author:** Xenroth (Richard C. Cupal, LPT)
 > **Contact:** [me@xenroth.com](mailto:me@xenroth.com) · [+63 915 038 8448](tel:+639150388448)
-> **Version:** 1.2.1· **License:** GPL v2 or later
+> **Version:** 1.2.7 · **License:** GPL v2 or later
 
 An AI-powered chat assistant for WordPress that combines your website's own knowledge base with live site content (pages, posts, and WooCommerce products) to answer visitor questions, capture leads, and guide users through your services or store — all from a beautiful floating chat widget.
 
@@ -12,24 +12,33 @@ An AI-powered chat assistant for WordPress that combines your website's own know
 
 | Feature | Details |
 |---|---|
-| 💬 **Chat Widget** | Floating, toggleable chat bubble injected into every page via `wp_footer`. Notification bubble encourages interaction. |
-| 🤖 **Dual AI Provider** | Switch between **OpenAI** (`sk-…`) and **GitHub Models** (free with a GitHub PAT `github_pat_…`). Both use the same OpenAI-compatible API format. |
-| 📚 **Knowledge Base** | Upload **PDF**, **DOCX**, **DOC**, **TXT** files or scrape any public URL. AI answers from your content first. |
-| 🛒 **Live Site Content** | AI automatically reads published **pages**, **blog posts**, and **WooCommerce products** — including price, stock status, description, and ordering instructions. |
-| 👤 **Lead Capture** | AI naturally collects visitor **name & email** through conversation and saves them to the Leads dashboard. |
-| 🎨 **Custom Branding** | Set bot name, accent colour, and upload your own **logo/avatar** image. |
-| 📊 **Leads & Conversations** | Full conversation history, lead viewer with inline modal, CSV export, per-conversation delete. |
-| 🔒 **Security** | Session-based rate limiting (20 msg/hr), nonce verification on every AJAX request, SSRF-safe URL scraper. |
+| 💬 **Chat Widget** | Floating, toggleable chat bubble injected into every page via `wp_footer`. Animated notification bubble encourages interaction. Fully customisable open/close behaviour. |
+| 🤖 **Dual AI Provider** | Switch between **OpenAI** (paid, `sk-…`) and **GitHub Models** (completely free with a GitHub PAT). Both providers use the same OpenAI-compatible Chat Completions format — no code changes needed to switch. |
+| 📚 **Knowledge Base** | Upload **PDF**, **DOCX**, **DOC**, **TXT** files or scrape any public URL. AI prioritises your content when answering questions. Manage entries from the admin panel with per-item delete. |
+| 🛒 **Live Site Content Awareness** | AI automatically reads your published **pages**, **blog posts**, and **WooCommerce products** — including price, stock status, description, and buy links. No manual syncing needed. |
+| 👤 **Proactive Lead Capture** | AI asks for the visitor's **name** on the first reply, then — on the 4th reply — wittily invites them to share their **email** with exclusive-offer framing. Both are stored automatically to the Leads dashboard. Captured data is never shown to the visitor. |
+| 🎨 **Custom Branding** | Set a **bot name**, choose an **accent colour**, and upload your own **logo/avatar** (stored in WordPress Media Library). Changes reflect instantly in the widget. |
+| ✍️ **Custom AI Instructions** | Write a **system prompt** to define the bot's personality, focus topics, tone, and any business-specific rules (e.g. pricing policies, escalation steps). |
+| 📊 **Leads & Conversations Dashboard** | View all captured leads with **name**, **email**, **IP**, **country flag**, and **message count**. Full conversation history per lead, inline modal, deduplication, search/filter, sortable columns, and **CSV export**. |
+| 🔧 **System Status & Diagnostics** | Admin dashboard shows live API connection state, active model, and plugin version. Includes a **Test Connection** button (live API call with specific pass/fail/quota diagnosis) and a **Clear Fallback Mode** button to exit offline mode instantly. |
+| 🔁 **API Fallback Mode** | When the AI API hits a quota or rate-limit error, the plugin enters graceful offline mode and shows a configurable fallback message to visitors. Fallback clears automatically after 5 minutes or manually via the dashboard. |
+| 🔒 **Layered Security** | Per-session rate limiting (20 msg/hr), per-IP hourly cap (60 msg/hr), burst protection (10 msg/min), session-init flood protection (5/10 min), concurrency lock, UUID4 session validation, honeypot field, user-agent filtering, 2,000-character input cap, nonce verification on every request, and optional **Cloudflare Turnstile** bot challenge. |
+| 🔄 **Automatic Updates** | GitHub-based auto-updater hooks into WordPress's native update system — updates appear in **Dashboard → Updates** and install with one click, just like a WordPress.org plugin. |
 
 ---
 
-## Pro Features *(₱999 one-time payment)*
+## Pro Features *(₱999 one-time · all future Pro features included)*
 
-- 🎯 **Proactive Visitor Questioning** — AI initiates targeted questions before the visitor types.
-- 📋 **Knowledge-Base Topic Insights** — Real-time list of KB topics most relevant to what the visitor is browsing.
-- 🛍️ **Service & Product Purchase Guide** — Conversational step-by-step guidance to checkout.
+| Feature | Details |
+|---|---|
+| 🎯 **Proactive Visitor Questioning** | The AI opens with targeted questions tailored to the page the visitor is on — before they even type — to surface their needs and drive deeper engagement from the very first second. |
+| 📋 **Knowledge-Base Topic Insights** | After every AI reply, the backend searches the KB for entries related to the visitor's message and surfaces up to 5 relevant topics in real time. The visitor sees a live-updating **Related Topics** panel in the chat. |
+| 🛍️ **Service & Product Purchase Guide** | Step-by-step conversational guidance that walks prospects through your offerings and directs them to checkout or a sales contact — turning browsers into buyers. |
+| 💬 **Topic Quick-Menu (KB Chips)** | Clickable topic chips appear above the chat input listing all active KB topics. One tap pre-fills and sends the message instantly — no typing required. The panel updates dynamically to show only topics related to the current conversation. |
+| 🔮 **All Future Pro Features** | Every new capability released under the Pro tier is automatically unlocked for existing license holders — forever. |
 
-Interested? Contact **[me@xenroth.com](mailto:me@xenroth.com)** or **[+63 915 038 8448](tel:+639150388448)**.
+Activate via **XEN A.I → Pro License** in your WordPress admin, or contact the developer to get a key:
+**[me@xenroth.com](mailto:me@xenroth.com)** · **[+63 915 038 8448](tel:+639150388448)** · [LINE Community](https://line.me/R/ti/g/DBGUQQdSg2)
 
 ---
 
@@ -126,10 +135,4 @@ Created automatically on plugin activation:
 
 ## Changelog
 
-### 1.0.0
-- Initial release with full feature set.
-- Dual AI provider support (OpenAI + GitHub Models).
-- Live site content awareness (pages, posts, WooCommerce).
-- Logo upload via WordPress Media Library.
-- Lead capture with name & email extraction.
-- Pro features teaser with contact information.
+See [CHANGELOG.md](CHANGELOG.md) for the full version history.
