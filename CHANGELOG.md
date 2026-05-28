@@ -4,6 +4,19 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.8] — 2026-05-28
+
+### New Features
+
+- **Version announcement bar on dashboard** — a persistent dark-slate banner now appears on the dashboard for both free and pro users, celebrating the current release with key highlights and a direct invite to join the LINE community. Previously the community bar was accidentally commented out and only the free-tier promo banner contained a LINE invite (meaning pro users never saw it after activating).
+
+### WordPress Repository
+
+- **`readme.txt` created** — added the WP.org-required `readme.txt` with proper format: plugin header block, full feature descriptions, installation steps, FAQ, external services disclosure (OpenAI, GitHub Models, QR API), screenshot list, and full changelog.
+- **`Author URI` corrected** — changed from `mailto:me@xenroth.com` (invalid for WP.org) to `https://github.com/xenroth`.
+
+---
+
 ## [1.2.7] — 2026-05-28
 
 ### Improvements
