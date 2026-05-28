@@ -4,6 +4,14 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.9] — 2026-05-28
+
+### Improvements
+
+- **Announcement bar spacing** — added bottom margin below the version announcement bar so the stats cards no longer stick to its bottom edge.
+
+---
+
 ## [1.2.8] — 2026-05-28
 
 ### New Features
