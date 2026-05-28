@@ -75,6 +75,7 @@
           XenChat.sessionId = res.data.session_id;
           // Pro feature: show page-contextual greeting instead of static one
           if (res.data.pro_greeting) {
+            XenChat.greeted = true; // prevent open() from appending the static greeting again
             XenChat.appendMessage('assistant', res.data.pro_greeting);
           }
           // Pro feature: KB topic panel + quick-menu chips

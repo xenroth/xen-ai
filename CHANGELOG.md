@@ -4,6 +4,20 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.2] — 2026-05-28
+
+### Bug Fixes
+
+- **OpenAI API key not saving** — the API key (and GitHub token / Turnstile secret) fields displayed a `••••••••` mask as their literal value. Typing a new key on top of the mask caused `••••••••new_key` to be saved instead of just the new key, making the API call fail silently. Fixed by adding focus/blur handlers in `admin.js`: the mask is cleared when the user focuses the field so they can type a fresh value; if the field is left empty on blur, the mask is restored so the existing key is preserved on save.
+
+- **Chatbot widget shows double greeting on empty knowledge base** — when Pro is active, `startSession()` appended a page-contextual greeting to the chat messages while the widget was still closed. When the user then opened the chat, `open()` saw `greeted = false` and appended the static greeting again, resulting in two opening messages. Fixed by setting `XenChat.greeted = true` in `chat.js` when the Pro greeting is received, so `open()` skips the redundant static greeting.
+
+### Improvements
+
+- **Announcement bar update reminder** — the Community & Announcements strip on the Dashboard now includes a reminder to check for updates under WordPress → Plugins to ensure the latest version is always installed.
+
+---
+
 ## [1.2.1] — 2026-05-27
 
 ### Improved

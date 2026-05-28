@@ -108,7 +108,7 @@ $license_record = Xen_AI_License::get_record();
 			</span>
 			<div class="xen-ai-community-bar-text">
 				<strong>Community &amp; Announcements</strong>
-				<span>Get plugin updates, tips, and announcements directly from the developer.</span>
+				<span>Get plugin updates, tips, and announcements directly from the developer. &nbsp;<strong>⚠ Always check for updates</strong> under <em>WordPress → Plugins</em> to download the latest version.</span>
 			</div>
 			<a href="https://line.me/R/ti/g/DBGUQQdSg2" target="_blank" rel="noopener noreferrer" class="xen-ai-btn xen-ai-btn-line xen-ai-btn-line-sm">
 				Join LINE Group →
