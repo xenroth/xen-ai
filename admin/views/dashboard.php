@@ -351,7 +351,6 @@ $license_record = Xen_AI_License::get_record();
 				<h2 class="xen-ai-card-title" style="margin:0;">✨ XEN A.I Pro</h2>
 				<p style="margin:6px 0 0;color:var(--xen-text-muted);font-size:0.875rem;">Supercharge your chat assistant with advanced engagement tools.</p>
 			</div>
-			<span class="xen-ai-pro-badge">Coming Soon</span>
 		</div>
 
 		<div class="xen-ai-pro-features-grid">

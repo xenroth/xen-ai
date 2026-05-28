@@ -4,6 +4,14 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.3.2] — 2026-05-28
+
+### Improvements
+
+- **Removed "Coming Soon" badge from Pro card** — all four Pro features (Proactive Visitor Questioning, KB Topic Insights, Purchase Guide, Topic Quick-Menu) are fully implemented and activate automatically upon license activation. The badge has been removed to accurately reflect availability.
+
+---
+
 ## [1.3.1] — 2026-05-29
 
 ### Branding
