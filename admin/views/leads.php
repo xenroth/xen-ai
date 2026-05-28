@@ -156,7 +156,7 @@ $sort_link = function( $col, $label ) use ( $orderby, $order, $search ) {
 
 		<?php if ( empty( $leads ) ) : ?>
 			<p class="xen-ai-muted xen-ai-empty-msg">
-				<?php echo $search ? 'No leads match your search.' : 'No leads captured yet. The AI will collect visitor names and emails naturally during chat and they will appear here.'; ?>
+				<?php echo esc_html( $search ? 'No leads match your search.' : 'No leads captured yet. The AI will collect visitor names and emails naturally during chat and they will appear here.' ); ?>
 			</p>
 		<?php else : ?>
 

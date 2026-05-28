@@ -3,7 +3,7 @@ Contributors: xenroth
 Tags: ai, chatbot, chat, lead-capture, openai, knowledge-base, woocommerce, gpt
 Requires at least: 5.8
 Tested up to: 6.7
-Stable tag: 1.2.9
+Stable tag: 1.3.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -44,6 +44,9 @@ This plugin sends data to external services when processing chat messages:
 * **OpenAI API** (`https://api.openai.com`) — used when the OpenAI provider is selected. Messages and knowledge-base context are sent to OpenAI to generate AI replies. See [OpenAI Privacy Policy](https://openai.com/privacy) and [Terms of Use](https://openai.com/terms).
 * **GitHub Models API** (`https://models.inference.ai.azure.com`) — used when the GitHub Models provider is selected. Same data is sent to GitHub/Azure-hosted models. See [GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement) and [GitHub Terms of Service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service).
 * **QR Code API** (`https://api.qrserver.com`) — used in the admin dashboard only to generate a QR code image for the LINE community group link. No user data is sent.
+* **ip-api.com** (`https://ip-api.com`) — used in the admin Leads dashboard to resolve visitor IP addresses to a country name/flag. Only the IP address (already stored from the visitor's chat session) is sent; no personal data. See [ip-api.com Privacy Policy](https://ip-api.com/docs/legal).
+* **XEN A.I License API** (`https://api.xenroth.com`) — used when activating or deactivating a Pro license. The site domain and license key are sent to verify entitlement. No visitor data is transmitted. See the developer's privacy policy at [xenroth.com](https://xenroth.com).
+* **Cloudflare Turnstile** (`https://challenges.cloudflare.com`) — optional bot-challenge widget for the chat widget. Only activated if you configure a Turnstile site key in Settings. See [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/).
 
 No data is sent to any external service by this plugin outside of the above.
 

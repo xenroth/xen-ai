@@ -4,6 +4,15 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.3.0] — 2026-05-28
+
+### WordPress Repository Compliance
+
+- **All `echo` statements properly escaped** — every `echo` in the admin view files (`dashboard.php`, `leads.php`, `license.php`) now wraps output in `esc_html()` or `esc_attr()` as appropriate. Values going into HTML attributes use `esc_attr()`; values going into HTML content use `esc_html()`. This eliminates the most common reason for WP.org plugin review rejection.
+- **External services disclosure completed in `readme.txt`** — added the three previously undisclosed external calls: `ip-api.com` (geo-IP in Leads dashboard), `api.xenroth.com` (Pro license validation), and Cloudflare Turnstile (`challenges.cloudflare.com`, optional bot challenge). WP.org requires every external HTTP call to be disclosed.
+
+---
+
 ## [1.2.9] — 2026-05-28
 
 ### Improvements

@@ -21,8 +21,8 @@ $masked  = Xen_AI_License::get_masked_key();
 	<!-- Status banner -->
 	<div class="xen-ai-card xen-ai-mt">
 		<div class="xen-ai-license-status-row">
-			<div class="xen-ai-license-status-icon <?php echo $active ? 'active' : 'inactive'; ?>">
-				<?php echo $active ? '✅' : '🔒'; ?>
+		<div class="xen-ai-license-status-icon <?php echo esc_attr( $active ? 'active' : 'inactive' ); ?>">
+			<?php echo esc_html( $active ? '✅' : '🔒' ); ?>
 			</div>
 			<div>
 				<strong class="xen-ai-license-status-label">
@@ -31,7 +31,7 @@ $masked  = Xen_AI_License::get_masked_key();
 				<p class="xen-ai-help" style="margin:4px 0 0;">
 					<?php if ( $active ) : ?>
 						Licensed to: <strong><?php echo esc_html( $record['domain'] ?? get_site_url() ); ?></strong>
-						&nbsp;·&nbsp; Activated: <strong><?php echo $record['activated_at'] ? date_i18n( get_option( 'date_format' ), $record['activated_at'] ) : '—'; ?></strong>
+						&nbsp;·&nbsp; Activated: <strong><?php echo esc_html( $record['activated_at'] ? date_i18n( get_option( 'date_format' ), $record['activated_at'] ) : '—' ); ?></strong>
 						<?php if ( ! empty( $record['email'] ) ) : ?>
 						&nbsp;·&nbsp; Email: <strong><?php echo esc_html( $record['email'] ); ?></strong>
 						<?php endif; ?>
@@ -105,7 +105,7 @@ $masked  = Xen_AI_License::get_masked_key();
 			<div>
 				<h2 class="xen-ai-card-title" style="margin:0;">✨ Pro Features</h2>
 				<p style="margin:6px 0 0;color:var(--xen-text-muted);font-size:0.875rem;">
-					<?php echo $active ? 'All features below are active on your site.' : 'Unlock all of the following by activating your license.'; ?>
+					<?php echo esc_html( $active ? 'All features below are active on your site.' : 'Unlock all of the following by activating your license.' ); ?>
 				</p>
 			</div>
 			<?php if ( $active ) : ?>
@@ -116,21 +116,21 @@ $masked  = Xen_AI_License::get_masked_key();
 		</div>
 
 		<div class="xen-ai-pro-features-grid">
-			<div class="xen-ai-pro-feature <?php echo $active ? '' : 'xen-pro-locked'; ?>">
+			<div class="xen-ai-pro-feature <?php echo esc_attr( $active ? '' : 'xen-pro-locked' ); ?>">
 				<span class="xen-ai-pro-feature-icon">🎯</span>
 				<div>
 					<strong>Proactive Visitor Questioning</strong>
 					<p>AI opens with a page-contextual question tailored to where the visitor landed.</p>
 				</div>
 			</div>
-			<div class="xen-ai-pro-feature <?php echo $active ? '' : 'xen-pro-locked'; ?>">
+			<div class="xen-ai-pro-feature <?php echo esc_attr( $active ? '' : 'xen-pro-locked' ); ?>">
 				<span class="xen-ai-pro-feature-icon">📋</span>
 				<div>
 					<strong>Knowledge-Base Topic Insights</strong>
 					<p>Surfaces relevant KB topics in the chat so visitors instantly know what to ask.</p>
 				</div>
 			</div>
-			<div class="xen-ai-pro-feature <?php echo $active ? '' : 'xen-pro-locked'; ?>">
+			<div class="xen-ai-pro-feature <?php echo esc_attr( $active ? '' : 'xen-pro-locked' ); ?>">
 				<span class="xen-ai-pro-feature-icon">🛒</span>
 				<div>
 					<strong>Service &amp; Product Purchase Guide</strong>

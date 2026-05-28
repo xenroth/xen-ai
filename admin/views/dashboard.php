@@ -121,16 +121,16 @@ $license_record = Xen_AI_License::get_record();
 		?>
 		<table class="xen-ai-status-table">
 			<tr>
-				<td><span class="xen-ai-dot <?php echo $configured ? 'green' : 'red'; ?>"></span> <?php echo esc_html( $provider_name ); ?></td>
-				<td><strong><?php echo $configured ? 'Connected' : 'Not configured'; ?></strong></td>
+				<td><span class="xen-ai-dot <?php echo esc_attr( $configured ? 'green' : 'red' ); ?>"></span> <?php echo esc_html( $provider_name ); ?></td>
+				<td><strong><?php echo esc_html( $configured ? 'Connected' : 'Not configured' ); ?></strong></td>
 			</tr>
 			<tr>
 				<td><span class="xen-ai-dot green"></span> AI Model</td>
 				<td><strong><?php echo esc_html( $active_model ); ?></strong></td>
 			</tr>
 			<tr>
-				<td><span class="xen-ai-dot <?php echo empty( $settings['disable_chat'] ) ? 'green' : 'red'; ?>"></span> Chat Widget</td>
-				<td><strong><?php echo empty( $settings['disable_chat'] ) ? 'Enabled' : 'Disabled'; ?></strong></td>
+				<td><span class="xen-ai-dot <?php echo esc_attr( empty( $settings['disable_chat'] ) ? 'green' : 'red' ); ?>"></span> Chat Widget</td>
+				<td><strong><?php echo esc_html( empty( $settings['disable_chat'] ) ? 'Enabled' : 'Disabled' ); ?></strong></td>
 			</tr>
 			<tr>
 				<td><span class="xen-ai-dot green"></span> Plugin Version</td>
@@ -212,8 +212,8 @@ $license_record = Xen_AI_License::get_record();
 			<p class="xen-ai-gs-intro">Follow these steps to get XEN A.I fully set up on your site:</p>
 			<ol class="xen-ai-gs-steps">
 
-				<li class="xen-ai-gs-step <?php echo $configured ? 'xen-ai-gs-done' : ''; ?>">
-					<div class="xen-ai-gs-step-num"><?php echo $configured ? '✓' : '1'; ?></div>
+				<li class="xen-ai-gs-step <?php echo esc_attr( $configured ? 'xen-ai-gs-done' : '' ); ?>">
+					<div class="xen-ai-gs-step-num"><?php echo esc_html( $configured ? '✓' : '1' ); ?></div>
 					<div class="xen-ai-gs-step-body">
 						<strong>Connect your AI provider</strong>
 						<p>Go to <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-settings' ) ); ?>">Settings</a> and add your <strong>OpenAI API key</strong> (<code>sk-…</code>) or a <strong>GitHub Personal Access Token</strong> (free — works with GitHub Models). Choose your preferred model (GPT-4o, etc.).</p>
@@ -228,8 +228,8 @@ $license_record = Xen_AI_License::get_record();
 					</div>
 				</li>
 
-				<li class="xen-ai-gs-step <?php echo $kb_count > 0 ? 'xen-ai-gs-done' : ''; ?>">
-					<div class="xen-ai-gs-step-num"><?php echo $kb_count > 0 ? '✓' : '3'; ?></div>
+				<li class="xen-ai-gs-step <?php echo esc_attr( $kb_count > 0 ? 'xen-ai-gs-done' : '' ); ?>">
+					<div class="xen-ai-gs-step-num"><?php echo esc_html( $kb_count > 0 ? '✓' : '3' ); ?></div>
 					<div class="xen-ai-gs-step-body">
 						<strong>Build your Knowledge Base</strong>
 						<p>Go to <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-kb' ) ); ?>">Knowledge Base</a> and upload PDFs, DOCX or TXT files, or paste a URL to scrape. The AI will prioritise this content when answering visitor questions.</p>
@@ -252,8 +252,8 @@ $license_record = Xen_AI_License::get_record();
 					</div>
 				</li>
 
-				<li class="xen-ai-gs-step <?php echo $is_pro ? 'xen-ai-gs-done' : ''; ?>">
-					<div class="xen-ai-gs-step-num"><?php echo $is_pro ? '✓' : '6'; ?></div>
+				<li class="xen-ai-gs-step <?php echo esc_attr( $is_pro ? 'xen-ai-gs-done' : '' ); ?>">
+					<div class="xen-ai-gs-step-num"><?php echo esc_html( $is_pro ? '✓' : '6' ); ?></div>
 					<div class="xen-ai-gs-step-body">
 						<strong>Activate Pro <span class="xen-ai-gs-optional">(optional)</span></strong>
 						<p><?php if ( $is_pro ) : ?>Your Pro license is active — all advanced features are already enabled including proactive questioning, topic chips and the purchase guide. <?php else : ?>Go to <a href="<?php echo esc_url( admin_url( 'admin.php?page=xen-ai-license' ) ); ?>">Pro License</a> and enter your license key to unlock proactive visitor engagement, topic quick-menus, the purchase guide, and all future Pro features. <?php endif; ?></p>
