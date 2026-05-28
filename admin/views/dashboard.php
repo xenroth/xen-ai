@@ -100,7 +100,43 @@ $license_record = Xen_AI_License::get_record();
 	</div>
 	<?php endif; ?>
 
-	<!-- ── LINE Community & Announcements (always visible) ───── -->
+	<!-- Status card -->
+	<div class="xen-ai-card xen-ai-mt">
+		<h2 class="xen-ai-card-title">System Status</h2>
+		<?php
+		$provider_name = 'github' === ( $settings['provider'] ?? 'openai' ) ? 'GitHub Models' : 'OpenAI';
+		$active_model  = 'github' === ( $settings['provider'] ?? 'openai' )
+			? ( $settings['github_model'] ?? 'gpt-4o' )
+			: ( $settings['model']        ?? 'gpt-3.5-turbo' );
+		?>
+		<table class="xen-ai-status-table">
+			<tr>
+				<td><span class="xen-ai-dot <?php echo $configured ? 'green' : 'red'; ?>"></span> <?php echo esc_html( $provider_name ); ?></td>
+				<td><strong><?php echo $configured ? 'Connected' : 'Not configured'; ?></strong></td>
+			</tr>
+			<tr>
+				<td><span class="xen-ai-dot green"></span> AI Model</td>
+				<td><strong><?php echo esc_html( $active_model ); ?></strong></td>
+			</tr>
+			<tr>
+				<td><span class="xen-ai-dot <?php echo empty( $settings['disable_chat'] ) ? 'green' : 'red'; ?>"></span> Chat Widget</td>
+				<td><strong><?php echo empty( $settings['disable_chat'] ) ? 'Enabled' : 'Disabled'; ?></strong></td>
+			</tr>
+			<tr>
+				<td><span class="xen-ai-dot green"></span> Plugin Version</td>
+				<td>
+					<strong><?php echo esc_html( XEN_AI_VERSION ); ?></strong>
+					&nbsp;
+					<button type="button" id="xen-force-update-check" class="button button-small" style="vertical-align:middle;">
+						🔄 Check for Update
+					</button>
+					<span id="xen-update-check-result" style="margin-left:8px;font-size:0.85rem;"></span>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<!-- ── LINE Community & Announcements (always visible) ─────
 	<div class="xen-ai-community-bar">
 		<div class="xen-ai-community-bar-inner">
 			<span class="xen-ai-community-bar-icon">
@@ -351,41 +387,6 @@ $license_record = Xen_AI_License::get_record();
 	</div>
 	<?php endif; ?>
 
-	<!-- Status card -->
-	<div class="xen-ai-card xen-ai-mt">
-		<h2 class="xen-ai-card-title">System Status</h2>
-		<?php
-		$provider_name = 'github' === ( $settings['provider'] ?? 'openai' ) ? 'GitHub Models' : 'OpenAI';
-		$active_model  = 'github' === ( $settings['provider'] ?? 'openai' )
-			? ( $settings['github_model'] ?? 'gpt-4o' )
-			: ( $settings['model']        ?? 'gpt-3.5-turbo' );
-		?>
-		<table class="xen-ai-status-table">
-			<tr>
-				<td><span class="xen-ai-dot <?php echo $configured ? 'green' : 'red'; ?>"></span> <?php echo esc_html( $provider_name ); ?></td>
-				<td><strong><?php echo $configured ? 'Connected' : 'Not configured'; ?></strong></td>
-			</tr>
-			<tr>
-				<td><span class="xen-ai-dot green"></span> AI Model</td>
-				<td><strong><?php echo esc_html( $active_model ); ?></strong></td>
-			</tr>
-			<tr>
-				<td><span class="xen-ai-dot <?php echo empty( $settings['disable_chat'] ) ? 'green' : 'red'; ?>"></span> Chat Widget</td>
-				<td><strong><?php echo empty( $settings['disable_chat'] ) ? 'Enabled' : 'Disabled'; ?></strong></td>
-			</tr>
-			<tr>
-				<td><span class="xen-ai-dot green"></span> Plugin Version</td>
-				<td>
-					<strong><?php echo esc_html( XEN_AI_VERSION ); ?></strong>
-					&nbsp;
-					<button type="button" id="xen-force-update-check" class="button button-small" style="vertical-align:middle;">
-						🔄 Check for Update
-					</button>
-					<span id="xen-update-check-result" style="margin-left:8px;font-size:0.85rem;"></span>
-				</td>
-			</tr>
-		</table>
-	</div>
 
 </div>
 
