@@ -4,6 +4,24 @@ All notable changes to XEN AI are documented here.
 
 ---
 
+## [1.2.5] — 2026-05-28
+
+### Bug Fixes
+
+- **"I'm a little busy" shown on first message after setting a new API key** — when an API error (quota, billing, 429) occurs, the plugin sets a `xen_ai_api_unavailable` transient for 5 minutes that blocks all subsequent requests. Previously, this transient was never cleared when settings were saved, so saving a new valid key would still return the fallback message until the transient expired. Fixed by calling `delete_transient('xen_ai_api_unavailable')` at the end of every settings save.
+
+- **Invalid API key not distinguished from quota exhaustion** — a 401 "Incorrect API key" response from OpenAI hit the catch-all error path ("I'm having trouble responding"), which was confusing and could be mistaken for a temporary issue. Auth/unauthorized responses are now detected separately and routed to the "not fully set up" message, making it clear the key itself is the problem rather than the API being unavailable.
+
+---
+
+## [1.2.4] — 2026-05-28
+
+### Improvements
+
+- **System Status moved to top of dashboard** — the System Status card now appears as the first section on the dashboard, above the community bar, stats grid, and all other content, so the API connection state and plugin version are immediately visible.
+
+---
+
 ## [1.2.3] — 2026-05-28
 
 ### Bug Fixes

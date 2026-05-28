@@ -372,6 +372,17 @@ class Xen_AI_Chat_Ajax {
 			false !== stripos( $raw, '429' )
 		);
 
+		// Detect authentication / invalid-key errors (do NOT trip the fallback flag;
+		// the API is reachable — it's the key that's wrong).
+		$is_auth = (
+			false !== stripos( $raw, 'incorrect api key' ) ||
+			false !== stripos( $raw, 'invalid api key' ) ||
+			false !== stripos( $raw, 'invalid authentication' ) ||
+			false !== stripos( $raw, 'authentication' ) ||
+			false !== stripos( $raw, 'unauthorized' ) ||
+			false !== stripos( $raw, '401' )
+		);
+
 		if ( $is_quota ) {
 			// Trip the fallback flag so subsequent requests skip the AI call entirely.
 			set_transient( 'xen_ai_api_unavailable', 1, 5 * MINUTE_IN_SECONDS );
@@ -379,7 +390,7 @@ class Xen_AI_Chat_Ajax {
 			return $this->get_fallback_reply();
 		}
 
-		if ( 'no_api_key' === $code || 'no_token' === $code ) {
+		if ( 'no_api_key' === $code || 'no_token' === $code || $is_auth ) {
 			$this->log_error( $code, $raw );
 			return __( "The assistant isn't fully set up yet. Please leave a message and the site owner will follow up.", 'xen-ai' );
 		}

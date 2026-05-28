@@ -166,6 +166,10 @@ class Xen_AI_Admin {
 
 		update_option( 'xen_ai_settings', $settings );
 
+		// Clear any cached API-unavailable flag so the new settings are tested fresh
+		// rather than being blocked by a stale transient from a previous error.
+		delete_transient( 'xen_ai_api_unavailable' );
+
 		wp_send_json_success( [ 'message' => __( 'Settings saved successfully!', 'xen-ai' ) ] );
 	}
 
